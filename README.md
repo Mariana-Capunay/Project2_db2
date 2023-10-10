@@ -10,3 +10,9 @@
 8. Repetir pasos del 1 al 7 por cada buffer
 9. Retornar nombre de archivo en el que está cada buffer
 10. Hacer Merge con todos los buckets  (mezcla en big Index)
+
+# Query Idea
+1. Obtiene indice invertido de la query
+2. Extrae indice invertido (general)
+3. Aplica similitud coseno (no es necesario crear vectores de mismo espacio, hay que aprovechar uso de diccionarios para guardar cada termino)
+
