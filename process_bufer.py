@@ -2,6 +2,7 @@ import time
 
 # Tamaño máximo del buffer en bytes
 tamaño_maximo_buffer = 4096  # Puedes ajustar este valor según tus necesidades
+cont = 0
 
 # Ruta del archivo que deseas leer
 ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
@@ -25,9 +26,13 @@ with open(ruta_archivo, "r", encoding="utf-8") as archivo:
         # Procesar el buffer (hacer lo que necesites con las líneas leídas)
         print("Nuevo buffer:\n\n", "\n".join(buffer))  # En este ejemplo, simplemente imprime el buffer
         print("Tamaño buffer: ",tamaño_buffer)
+
         # Pausa el programa por 3 segundos antes de leer el siguiente buffer
-        time.sleep(3)
         
+        time.sleep(3)
+        cont+=1
         # Si el archivo ha llegado al final, sal del bucle
         if not buffer:
             break
+    print("Listo")
+    print(cont)
