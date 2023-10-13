@@ -16,3 +16,8 @@
 2. Extrae indice invertido (general)
 3. Aplica similitud coseno (no es necesario crear vectores de mismo espacio, hay que aprovechar uso de diccionarios para guardar cada termino)
 
+# Para obtener posición de una fila
+pos_row = tamaño de bytes leídos + 1
+- pos_row de encabezado = 0
+- pos_row de primera fila = pos_row(luego de encabezado) + tamaño de encabezado + len('\n') = 0+97+1
+- pos_row de segunda fila = bytes antes de primera fila + tamaño de primera fila + len('\n') = 98 +93+1
