@@ -1,14 +1,20 @@
-import json
 import nltk
 import os
 import io
 import json
+
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
 
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = io.DEFAULT_BUFFER_SIZE
 path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index"
+
+ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
+
+ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
+
+
 """
     Pasos:
         1. Preprocesar los documentos
@@ -33,10 +39,7 @@ class InvertedIndex:
     stopList = []
 
     def __init__(self):
-        self.setStoplist("stoplist.txt") #definimos StopList
-        
-        #ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
-        ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
+        self.setStoplist(ruta_stoplist+"\stoplist.txt") #definimos StopList
 
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
 
@@ -46,7 +49,7 @@ class InvertedIndex:
         for i in stop_words:
             self.stopList.append(i.strip('\n')) #se agrega cada elemento quitando saltos de linea
 
-        stop_words.close()                      #cierra archivo leido
+        stop_words.close() #cierra archivo leido
 
         stoplist_extended = "'«[]¿?$.,»:;!,º«»()@¡😆“/#|*%'`"
         for caracter in stoplist_extended:
@@ -63,8 +66,8 @@ class InvertedIndex:
 
             """ENCABEZADO"""
             encabezado_text = archivo.readline()
-            pos_row += len(encabezado_text.encode("utf-8"))     # Tamaño de la línea en bytes
-            pos_row += 1                                        # para contar donde inicia fila que sigue
+            pos_row += len(encabezado_text.encode("utf-8"))  # Tamaño de la línea en bytes
+            pos_row += 1 #para contar donde inicia fila que sigue
 
             self.colection_header = encabezado_text.strip().split(',')
             #print('Encabezados del CSV:', self.colection_header)
@@ -121,7 +124,6 @@ class InvertedIndex:
         buffer = archivo.read(tamaño_maximo_buffer) #leemos un buffer desde el csv
         ind_actual = 0
         indice_local = {} #para indice invertido local
-        llines = []
 
         if nro_buffer==531:
             print(buffer)
@@ -160,16 +162,8 @@ class InvertedIndex:
 
             campos.append(campo)
 
-            tmp = ""
             """
             for campo in campos:
-                tmp = tmp + campo.lower()
-            llines.append(tmp)
-
-            #for campo in campos:
-            #    print(campo,end= ' - ')
-            #print('\n')
-
                 print(campo,end= ' - ')
             print('\n')
             """
@@ -178,46 +172,14 @@ class InvertedIndex:
             
             #preProcesa cada linea
             self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local)
-        
         pos_inicio += ind_actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
-
-        #enviar indice a un archivo .json
-        # Opcion 1
-        jdict = {}
-        cmlines = {}
-        conteo = 0
-
-        #for line in llines:
-        #    print(line[1])
-
-        #print("Llines:")
-        #print(llines)
-        
-        for clave in indice_local.keys():
-            print("Coincidences for ", clave)
-            for id in range(0, len(llines), 1):
-                print("\tWith ", llines[id])
-                conteo = str(llines[id]).count(clave)
-                print("\t\tFound", conteo, " matches")
-                if conteo > 0:
-                    cmlines[id+2] = conteo                
-            jdict[clave] = cmlines
-            cmlines = {}
-            conteo = 0
-
-        with open('test_json.json', 'w') as archivo_json:
-            json.dump(jdict, archivo_json, indent=2)
-        
-
-        print("indice local: ",indice_local)
-
-
-
+    
         #enviar indice a un archivo .json
         # Escribir el conjunto de diccionarios en un archivo JSON
         
         ruta_indice_local = path_local_index+"\index"+str(nro_buffer+1).zfill(2)+".json"
+        
         with open(ruta_indice_local, "w") as archivo:
             json.dump(indice_local, archivo)
         #print("indice local: ",indice_local)
