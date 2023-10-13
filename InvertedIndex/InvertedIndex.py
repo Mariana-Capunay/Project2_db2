@@ -1,3 +1,4 @@
+import json
 import nltk
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
@@ -30,7 +31,9 @@ class InvertedIndex:
     def __init__(self):
         self.setStoplist("stoplist.txt") #definimos StopList
         
-        ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
+        #ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
+        ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
+
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
 
     def setStoplist(self,nombre):
@@ -39,7 +42,7 @@ class InvertedIndex:
         for i in stop_words:
             self.stopList.append(i.strip('\n')) #se agrega cada elemento quitando saltos de linea
 
-        stop_words.close() #cierra archivo leido
+        stop_words.close()                      #cierra archivo leido
 
         stoplist_extended = "'«[]¿?$.,»:;!,º«»()@¡😆“/#|*%'`"
         for caracter in stoplist_extended:
@@ -55,8 +58,8 @@ class InvertedIndex:
 
             """ENCABEZADO"""
             encabezado_text = archivo.readline()
-            pos_row += len(encabezado_text.encode("utf-8"))  # Tamaño de la línea en bytes
-            pos_row += 1 #para contar donde inicia fila que sigue
+            pos_row += len(encabezado_text.encode("utf-8"))     # Tamaño de la línea en bytes
+            pos_row += 1                                        # para contar donde inicia fila que sigue
 
             self.colection_header = encabezado_text.strip().split(',')
             #print('Encabezados del CSV:', self.colection_header)
@@ -109,6 +112,7 @@ class InvertedIndex:
         buffer = archivo.read(tamaño_maximo_buffer) #leemos un buffer desde el csv
         ind_actual = 0
         indice_local = {} #para indice invertido local
+        llines = []
 
         #print(len(buffer))
 
@@ -145,9 +149,14 @@ class InvertedIndex:
 
             campos.append(campo)
 
+            tmp = ""
             for campo in campos:
-                print(campo,end= ' - ')
-            print('\n')
+                tmp = tmp + campo.lower()
+            llines.append(tmp)
+
+            #for campo in campos:
+            #    print(campo,end= ' - ')
+            #print('\n')
 
             ind_actual += 1
             
@@ -155,17 +164,48 @@ class InvertedIndex:
             #preProcesa cada linea
             self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local)
 
+        
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
 
         #enviar indice a un archivo .json
-    
-        #print("indice local: ",indice_local)
+        # Opcion 1
+        jdict = {}
+        cmlines = {}
+        conteo = 0
+
+        #for line in llines:
+        #    print(line[1])
+
+        #print("Llines:")
+        #print(llines)
+        
+        for clave in indice_local.keys():
+            print("Coincidences for ", clave)
+            for id in range(0, len(llines), 1):
+                print("\tWith ", llines[id])
+                #print("\t\tFound", str(llines[id]).count(clave), " matches")
+                if clave in llines[id]:
+                    print("\t\tFound in ", id)
+                    if clave in cmlines:
+                        cmlines[id+2] = cmlines[id+2] + 1
+                    else: 
+                        cmlines[id+2] = 1
+            jdict[clave] = cmlines
+            cmlines = {}
+            conteo = 0
+
+        with open('test_json.json', 'w') as archivo_json:
+            json.dump(jdict, archivo_json, indent=2)
+        
+
+        print("indice local: ",indice_local)
+
         return pos_inicio
         
 
     def preProcessListandIndex(self,list_campos,dicc_lexemas):
         #los campos se encuentran separados en una lista
-        print(list_campos)
+        #print(list_campos)
         #dicc_lexemas = {} #se imprime solo para verificar correctitud del indice invertido por linea
         for i,campo in enumerate(list_campos):
             self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i])

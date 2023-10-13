@@ -1,5 +1,6 @@
 # Ruta al archivo CSV
-archivo_csv = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
+#archivo_csv = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
+archivo_csv = r"C:\Users\HP\Desktop\styles\styles.csv"
 
 # Posición específica en bytes donde se encuentra la línea que deseas leer
 posicion_bytes = 97  # Por ejemplo, la posición 100 en el archivo

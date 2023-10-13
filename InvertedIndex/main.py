@@ -1,4 +1,3 @@
-
 from InvertedIndex import InvertedIndex
 
 a = InvertedIndex()

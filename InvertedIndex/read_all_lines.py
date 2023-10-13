@@ -1,5 +1,6 @@
 # Ruta al archivo CSV
-archivo_csv = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
+#archivo_csv = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
+archivo_csv = r"C:\Users\HP\Desktop\styles\styles.csv"
 
 # Abre el archivo CSV en modo lectura
 with open(archivo_csv, 'r') as archivo:
