@@ -183,13 +183,10 @@ class InvertedIndex:
             print("Coincidences for ", clave)
             for id in range(0, len(llines), 1):
                 print("\tWith ", llines[id])
-                #print("\t\tFound", str(llines[id]).count(clave), " matches")
-                if clave in llines[id]:
-                    print("\t\tFound in ", id)
-                    if clave in cmlines:
-                        cmlines[id+2] = cmlines[id+2] + 1
-                    else: 
-                        cmlines[id+2] = 1
+                conteo = str(llines[id]).count(clave)
+                print("\t\tFound", conteo, " matches")
+                if conteo > 0:
+                    cmlines[id+2] = conteo                
             jdict[clave] = cmlines
             cmlines = {}
             conteo = 0
