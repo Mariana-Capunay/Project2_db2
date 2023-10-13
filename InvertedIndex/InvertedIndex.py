@@ -1,9 +1,13 @@
 import nltk
+import os
+import io
+import json
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
 
-tamaño_maximo_buffer = 4096  # Tamaño máximo del buffer en bytes
-
+# Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
+tamaño_maximo_buffer = io.DEFAULT_BUFFER_SIZE
+path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex"
 """
     Pasos:
         1. Preprocesar los documentos
@@ -49,9 +53,10 @@ class InvertedIndex:
     def preProcessCSV(self,ruta_archivo):
         cont = 0
         pos_row = 0
-
+        tamano_bytes = os.path.getsize(ruta_archivo)
+            
         # Abrir el archivo en modo lectura
-        with open(ruta_archivo, "r", encoding="utf-8") as archivo:
+        with open(ruta_archivo, "rt", encoding="utf-8") as archivo:
 
             """ENCABEZADO"""
             encabezado_text = archivo.readline()
@@ -64,15 +69,19 @@ class InvertedIndex:
             #print(pos_row)
 
             # modificar para leer todo el csv (ahora solo lee una pagina o buffer)
-            #while
-            pos_row = self.getBufferIndex(pos_row,archivo)
+            cont_buffer = 0
+            while tamano_bytes-3>=pos_row:
+                pos_row = self.getBufferIndex(pos_row,archivo,cont_buffer) #parametro i para nro de archivo .json
+                #print(pos_row)
+                cont_buffer+=1
+            print("Indices locales creados")
             """
                 for c in campos:
                     print(c,end='-')
                 print("\n")
             """
-                    
-
+                 
+        print(tamano_bytes)
     """
                 # Leer líneas del archivo y agregarlas al buffer hasta que el tamaño máximo se alcance
                 for linea in archivo:
@@ -104,13 +113,15 @@ class InvertedIndex:
             print(cont)
     """
 
-    def getBufferIndex(self,pos_inicio,archivo):
+    def getBufferIndex(self,pos_inicio,archivo,nro_buffer):
         archivo.seek(pos_inicio)
         buffer = archivo.read(tamaño_maximo_buffer) #leemos un buffer desde el csv
         ind_actual = 0
         indice_local = {} #para indice invertido local
 
-        #print(len(buffer))
+        if nro_buffer==531:
+            print(buffer)
+            print(len(buffer))
 
         #encontramos primer salto de linea y lo definimos como el límite
         i = len(buffer)-1
@@ -145,27 +156,32 @@ class InvertedIndex:
 
             campos.append(campo)
 
+            """
             for campo in campos:
                 print(campo,end= ' - ')
             print('\n')
-
+            """
             ind_actual += 1
-            
+            pos_inicio += 1
             
             #preProcesa cada linea
             self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local)
-
+        pos_inicio += ind_actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
 
         #enviar indice a un archivo .json
-    
+        # Escribir el conjunto de diccionarios en un archivo JSON
+        
+        ruta_indice_local = path_local_index+"\index"+str(nro_buffer+1).zfill(2)+".json"
+        with open(ruta_indice_local, "w") as archivo:
+            json.dump(indice_local, archivo)
         #print("indice local: ",indice_local)
         return pos_inicio
         
 
     def preProcessListandIndex(self,list_campos,dicc_lexemas):
         #los campos se encuentran separados en una lista
-        print(list_campos)
+        #print(list_campos)
         #dicc_lexemas = {} #se imprime solo para verificar correctitud del indice invertido por linea
         for i,campo in enumerate(list_campos):
             self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i])

@@ -2,7 +2,7 @@
 archivo_csv = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
 
 # Posición específica en bytes donde se encuentra la línea que deseas leer
-posicion_bytes = 97  # Por ejemplo, la posición 100 en el archivo
+posicion_bytes = 4376452   # Por ejemplo, la posición 100 en el archivo
 
 """tamaño de primera linea es 97, pero para leer la segunda -> pos_row = 98"""
 #posicion_bytes = 98+93+1  # Por ejemplo, la posición 100 en el archivo
