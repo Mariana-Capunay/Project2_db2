@@ -2,12 +2,19 @@ import nltk
 import os
 import io
 import json
+
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
 
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = io.DEFAULT_BUFFER_SIZE
 path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index"
+
+ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
+
+ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
+
+
 """
     Pasos:
         1. Preprocesar los documentos
@@ -32,9 +39,8 @@ class InvertedIndex:
     stopList = []
 
     def __init__(self):
-        self.setStoplist("stoplist.txt") #definimos StopList
-        
-        ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
+        self.setStoplist(ruta_stoplist+"\stoplist.txt") #definimos StopList
+
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
 
     def setStoplist(self,nombre):
@@ -168,11 +174,12 @@ class InvertedIndex:
             self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local)
         pos_inicio += ind_actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
-
+    
         #enviar indice a un archivo .json
         # Escribir el conjunto de diccionarios en un archivo JSON
         
         ruta_indice_local = path_local_index+"\index"+str(nro_buffer+1).zfill(2)+".json"
+        
         with open(ruta_indice_local, "w") as archivo:
             json.dump(indice_local, archivo)
         #print("indice local: ",indice_local)
