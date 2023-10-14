@@ -60,6 +60,7 @@ class InvertedIndex:
         cont = 0
         pos_row = 0
         tamano_bytes = os.path.getsize(ruta_archivo)
+        
             
         # Abrir el archivo en modo lectura
         with open(ruta_archivo, "rt", encoding="utf-8") as archivo:
@@ -121,6 +122,7 @@ class InvertedIndex:
 
     def getBufferIndex(self,pos_inicio,archivo,nro_buffer):
         archivo.seek(pos_inicio)
+        ind_result = pos_inicio
         buffer = archivo.read(tamaño_maximo_buffer) #leemos un buffer desde el csv
         ind_actual = 0
         indice_local = {} #para indice invertido local
@@ -135,7 +137,8 @@ class InvertedIndex:
             i -= 1
         #print(i)
         #print(buffer)
-        
+        pos_fila = 0
+        tamaño_linea = 0 #no estamos considerando primera posicion
         #se lee una cantidad entera de lineas
         while ind_actual<i-1: #obtendremos cada linea 
             cont_comas = 0
@@ -148,10 +151,15 @@ class InvertedIndex:
                 while buffer[ind_actual]!=',':  
                     if buffer[ind_actual]!='\n':
                         campo += buffer[ind_actual]
+                        tamaño_linea += len(buffer[ind_actual].encode('utf-8')) #aumenta el tamaño de la linea
+                        
                     ind_actual += 1
-
+                    #tamaño_linea += '\n'.encode('utf-8') #aumenta el tamaño de la linea
+                
                 cont_comas += 1 #aumentamos la cantidad de comas
                 ind_actual += 1
+                tamaño_linea += len(','.encode('utf-8')) #aumenta tamaño linea
+
                 campos.append(campo)    #añadimos el campo
 
             campo = ""
@@ -159,6 +167,7 @@ class InvertedIndex:
             while buffer[ind_actual]!='\n':    
                 campo += buffer[ind_actual]
                 ind_actual += 1
+                tamaño_linea += len(buffer[ind_actual].encode('utf-8')) #aumenta tamaño linea
 
             campos.append(campo)
 
@@ -168,35 +177,42 @@ class InvertedIndex:
             print('\n')
             """
             ind_actual += 1
-            pos_inicio += 1
-            
+            ind_result += 1
+            tamaño_linea += len('\n'.encode('utf-8'))
+
+            pos_row = pos_inicio+ind_actual-tamaño_linea+pos_fila #se aumenta uno por siguiente posicion
+            print(pos_row)
+
+            pos_fila += 1
+            tamaño_linea = 0 #porque ya se considera posicion actual
+
             #preProcesa cada linea
-            self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local)
-        pos_inicio += ind_actual
+            self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local, pos_row=pos_row)
+        ind_result += ind_actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
     
         #enviar indice a un archivo .json
         # Escribir el conjunto de diccionarios en un archivo JSON
         
         ruta_indice_local = path_local_index+"\index"+str(nro_buffer+1).zfill(2)+".json"
-        
+        print("indice: ",indice_local)
         with open(ruta_indice_local, "w") as archivo:
             json.dump(indice_local, archivo)
         #print("indice local: ",indice_local)
-        return pos_inicio
+        return ind_result
         
 
-    def preProcessListandIndex(self,list_campos,dicc_lexemas):
+    def preProcessListandIndex(self,list_campos,dicc_lexemas,pos_row):
         #los campos se encuentran separados en una lista
         #print(list_campos)
         #dicc_lexemas = {} #se imprime solo para verificar correctitud del indice invertido por linea
         for i,campo in enumerate(list_campos):
-            self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i])
+            self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row)
             #print("Lexemas+tf: ",dicc_lexemas) #verificacion del indice invertido por linea
         
 
         
-    def preProcessandIndex(self,texto,dicc_lexemas,peso=1): #recibe una fila y genera diccionario (pos_row, suma(tf_por_campo*peso_campo))
+    def preProcessandIndex(self,texto,dicc_lexemas,peso=1,pos_row=-1): #recibe una fila y genera diccionario (pos_row, suma(tf_por_campo*peso_campo))
         # 1. tokenizar
         tokens = nltk.word_tokenize(texto.lower())
 
@@ -220,14 +236,39 @@ class InvertedIndex:
         for i in range (len(tokens)):
             if tokens[i] not in self.stopList:
                 lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
+                #print("termino: ",lexema,"\n","pos_row:",pos_row)
+    
                 if peso!=0: #solo se debe añadir si su peso realmente influye
-                    # agregamos correctamente el contador en el diccionario
-                    if lexema in dicc_lexemas:
-                        dicc_lexemas[lexema] += peso #ya apareció antes
+                    if pos_row==-1:
+                        if lexema in dicc_lexemas:
+                            dicc_lexemas[lexema] += peso
+                        else:
+                            dicc_lexemas[lexema] = peso
                     else:
-                        dicc_lexemas[lexema] = peso #aparece por primera vez
+                        if lexema in dicc_lexemas:
+                            if pos_row in dicc_lexemas[lexema]:
+                                dicc_lexemas[lexema][pos_row] += peso
+                            else:
+                                dicc_lexemas[lexema] = {pos_row:peso}
+                        else:
+                            dicc_lexemas[lexema] = {pos_row:peso}
+                 
+                    #print(dicc_lexemas)      
+                    """
+                    # agregamos correctamente el contador en el diccionario
+                    if lexema in dicc_lexemas and pos_row!=-1: #caso en el que se quiera asociar a una fila
+                            if pos_row in dicc_lexemas[lexema]:
+                                dicc_lexemas[lexema][pos_row] += peso #ya apareció antes
+                            else:
+                                dicc_lexemas[lexema] = {pos_row:peso} #primera vez que aparece
 
-        
+                    #caso en el que no se quiera asociar a una fila (para Query)
+                    elif lexema in dicc_lexemas:  #ya existe 
+                        dicc_lexemas[lexema] += peso #aparece por primera vez
+                    else:
+                        dicc_lexemas[lexema] = peso 
+"""
+        #print(dicc_lexemas)
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
     
 
