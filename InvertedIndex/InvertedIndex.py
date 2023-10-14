@@ -219,7 +219,7 @@ class InvertedIndex:
         #print("Tokens:",tokens)
 
         # 3. sacar el lexema
-        stemmer = SnowballStemmer('spanish')
+        stemmer = SnowballStemmer('english')
         #dicc_lexemas = {}
 
         # 2. obtener stoplist y eliminarlo
