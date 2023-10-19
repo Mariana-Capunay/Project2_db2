@@ -2,6 +2,7 @@ import nltk
 import os
 import io
 import json
+import math
 
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
@@ -38,7 +39,7 @@ ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGI
 
 class InvertedIndex:
     colection_header = []
-    pesos = [0,1,1,1,1,1,1,1,1,1] # para guardar pesos de cada campo
+    pesos = [0,1,1,1,1,1,1,1,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
 
     def __init__(self):
@@ -80,8 +81,12 @@ class InvertedIndex:
 
             # modificar para leer todo el csv (ahora solo lee una pagina o buffer)
             cont_buffer = 0
+
+            normas = {} # diccionario para normas
+
             while tamano_bytes-3>=pos_row:
-                pos_row = self.getBufferIndex(pos_row,archivo,cont_buffer) #parametro i para nro de archivo .json
+                pos_row = self.getBufferIndex(pos_row,archivo,cont_buffer,normas) #parametro i para nro de archivo .json
+                
                 #print(pos_row)
                 cont_buffer+=1
             print("Indices locales creados")
@@ -91,7 +96,13 @@ class InvertedIndex:
                 print("\n")
             """
                  
-        print(tamano_bytes)
+        ruta_normas = ruta_stoplist+r"\normas.json" #generamos un archivo json para guardar info de las normas ([pos_row]:norma)
+        print("guardando normas")
+        with open(ruta_normas, "w") as archivo:
+            json.dump(normas, archivo)
+        #print("indice local: ",indice_local)
+        print(normas)
+        #print(tamano_bytes)
     """
                 # Leer líneas del archivo y agregarlas al buffer hasta que el tamaño máximo se alcance
                 for linea in archivo:
@@ -123,16 +134,18 @@ class InvertedIndex:
             print(cont)
     """
 
-    def getBufferIndex(self,pos_inicio,archivo,nro_buffer):
+    def getBufferIndex(self,pos_inicio,archivo,nro_buffer,normas):
         archivo.seek(pos_inicio)
         ind_result = pos_inicio
         buffer = archivo.read(tamaño_maximo_buffer) #leemos un buffer desde el csv
         ind_actual = 0
         indice_local = {} #para indice invertido local
 
+        """
         if nro_buffer==531:
             print(buffer)
             print(len(buffer))
+        """
 
         #encontramos primer salto de linea y lo definimos como el límite
         i = len(buffer)-1
@@ -184,13 +197,14 @@ class InvertedIndex:
             tamaño_linea += len('\n'.encode('utf-8'))
 
             pos_row = pos_inicio+ind_actual-tamaño_linea+pos_fila #se aumenta uno por siguiente posicion
-            print(pos_row)
+            #print(pos_row)
 
             pos_fila += 1
             tamaño_linea = 0 #porque ya se considera posicion actual
 
             #preProcesa cada linea
-            self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local, pos_row=pos_row)
+            self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local, pos_row=pos_row,dicc_normas=normas) #enviamos diccionario de normas
+
         ind_result += ind_actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
     
@@ -198,24 +212,44 @@ class InvertedIndex:
         # Escribir el conjunto de diccionarios en un archivo JSON
         
         ruta_indice_local = path_local_index+"\index"+str(nro_buffer+1).zfill(2)+".json"
-        print("indice: ",indice_local)
+        #print("indice: ",indice_local)
         with open(ruta_indice_local, "w") as archivo:
             json.dump(indice_local, archivo)
-        #print("indice local: ",indice_local)
         return ind_result
+
         
 
-    def preProcessListandIndex(self,list_campos,dicc_lexemas,pos_row):
+    def preProcessListandIndex(self,list_campos,dicc_lexemas,pos_row, dicc_normas): #recibimos también un diccionario de normas
         #los campos se encuentran separados en una lista
         #print(list_campos)
         #dicc_lexemas = {} #se imprime solo para verificar correctitud del indice invertido por linea
+
+        tf_total = 0 #para guardar la norma
+
         for i,campo in enumerate(list_campos):
-            self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row)
+
+            #obtendremos la norma por cada campo (mientras preprocesamos)
+            tf_campo = self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row) 
+
+            tf_total += tf_campo # almacenamos la suma de tf's (de todos los campos)
             #print("Lexemas+tf: ",dicc_lexemas) #verificacion del indice invertido por linea
+
+        dicc_normas[pos_row] = round(math.sqrt(tf_total),3) #agregamos la norma en el diccionario de normas (redondeada a 3 decimales)
         
 
         
-    def preProcessandIndex(self,texto,dicc_lexemas,peso=1,pos_row=-1): #recibe una fila y genera diccionario (pos_row, suma(tf_por_campo*peso_campo))
+    def preProcessandIndex(self,texto,dicc_lexemas,peso=1,pos_row=-1): #recibe una fila y genera diccionario (pos_row, suma(tf_por_campo*peso_campo)) .
+        
+        tf_local_campo = {} #diccionario local para gestionar las normas
+
+        """para calcular la norma:
+            - manejar un diccionario local (para todas las palabras de este campo) - *se evita sobrecargar la RAM*
+            - contabilizar por cada termino
+                norma = log_10 (1+ tf[i]*p ) : entiendase i como la cantidad de palabras en el campo
+            - guardar tf por cada termino (en disco)
+            - retornar el valor de la norma (al final se saca la raiz)
+        """
+        
         # 1. tokenizar
         tokens = nltk.word_tokenize(texto.lower())
 
@@ -236,13 +270,20 @@ class InvertedIndex:
         """
 
         # 2da idea de implementacion
-        for i in range (len(tokens)):
-            if tokens[i] not in self.stopList:
+
+        for i in range (len(tokens)): #recorre tokens
+            if tokens[i] not in self.stopList: #si no es stopWord
                 lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
                 #print("termino: ",lexema,"\n","pos_row:",pos_row)
-    
+                
+                # añadimos al diccionario local (para gestionar norma)
+                if lexema in tf_local_campo:
+                    tf_local_campo[lexema] += peso
+                else:
+                    tf_local_campo[lexema] = peso
+
                 if peso!=0: #solo se debe añadir si su peso realmente influye
-                    if pos_row==-1:
+                    if pos_row==-1: 
                         if lexema in dicc_lexemas:
                             dicc_lexemas[lexema] += peso
                         else:
@@ -270,7 +311,17 @@ class InvertedIndex:
                         dicc_lexemas[lexema] += peso #aparece por primera vez
                     else:
                         dicc_lexemas[lexema] = peso 
-"""
+                    """
+
+        # calculamos sumatoria de tf (por este campo)
+        tf_campo = 0 #para que calcule norma
+        for lexema in tf_local_campo: #hasta aquí, solo tenemos el peso (en crudo) de cada palabra, para las normas necesitamos *log_10(1+peso)*
+            tf_campo += math.log10(1+tf_local_campo[lexema]) #aquí ya calculamos el term_frequency  
+
+        #print("tf_campo:",tf_campo)
+        return tf_campo # term_frequency (por campo)
+
+    
         #print(dicc_lexemas)
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
     
