@@ -1,4 +1,25 @@
-# Project2_db2
+# Búsqueda y recuperación de la información
+
+## Table of Contents  
+### Introducción
+1. [Descripción del dominio de datos](#id1)
+2. [Librerías utilizadas](#id2)
+3. [Técnica de indexación de las librerías utilizadas](#id3)
+4. [Como se realiza el KNN Search y el Range Search](#id4)
+### Backend
+5. [Construcción del índice invertido](#id5)
+6. [Manejo de memoria secundaria](#id6)
+7. [Ejecución óptima de consultas](#id7)
+### Análisis de la maldición de la dimensionalidad y como mitigarlo
+### Frontend
+8. [Diseño del índice con PostgreSQL/MongoDB](#id8)
+9. [Análisis comparativo con su propia implementación](#id9)
+10. [Screenshots de la GUI](#id10)
+## Experimentación
+11. [Tablas y gráficos de los resultados](#id11)
+12. [Análisis y discusión](#id12)
+
+
 # Idea
 1. Leer el .csv de acuerdo a cantidad de un buffer (considerando que tome nro exacto de filas - no haga particion)
 2. Concatenar datos de cada fila (preguntar acerca de ponderacion)
