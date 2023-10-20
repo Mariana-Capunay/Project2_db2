@@ -101,7 +101,7 @@ class InvertedIndex:
         with open(ruta_normas, "w") as archivo:
             json.dump(normas, archivo)
         #print("indice local: ",indice_local)
-        print(normas)
+        #print(normas)
         #print(tamano_bytes)
     """
                 # Leer líneas del archivo y agregarlas al buffer hasta que el tamaño máximo se alcance
@@ -205,6 +205,7 @@ class InvertedIndex:
             #preProcesa cada linea
             self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local, pos_row=pos_row,dicc_normas=normas) #enviamos diccionario de normas
 
+
         ind_result += ind_actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
     
@@ -219,28 +220,44 @@ class InvertedIndex:
 
         
 
+    # funcion para evaluar todos los campos de una fila (doc)
     def preProcessListandIndex(self,list_campos,dicc_lexemas,pos_row, dicc_normas): #recibimos también un diccionario de normas
         #los campos se encuentran separados en una lista
         #print(list_campos)
         #dicc_lexemas = {} #se imprime solo para verificar correctitud del indice invertido por linea
 
-        tf_total = 0 #para guardar la norma
+        dicc_normas[pos_row] = 0
+        tf_local = {} #para contabilizar tf de cada palabra (en esta fila)
 
         for i,campo in enumerate(list_campos):
 
             #obtendremos la norma por cada campo (mientras preprocesamos)
-            tf_campo = self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row) 
+            #tf_campo = self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row,tf_local=tf_local) 
+            #tf_total += tf_campo # almacenamos la suma de tf's (de todos los campos)
 
-            tf_total += tf_campo # almacenamos la suma de tf's (de todos los campos)
+            self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row,tf_local=tf_local) 
             #print("Lexemas+tf: ",dicc_lexemas) #verificacion del indice invertido por linea
 
-        dicc_normas[pos_row] = round(math.sqrt(tf_total),3) #agregamos la norma en el diccionario de normas (redondeada a 3 decimales)
-        
+        for token in tf_local:
+            #tf_local[tf] = math.log10(tf_local[tf])
+            #dicc_normas[pos_row] += round(math.log10(1+tf_local[token])**2,3)
+            dicc_lexemas[token][pos_row] = round(math.log10(1+dicc_lexemas[token][pos_row]),3)
+            dicc_normas[pos_row] += round(dicc_lexemas[token][pos_row]**2,3)
+            """
+            if pos_row==98:
+                print(dicc_lexemas[token][pos_row],dicc_normas[pos_row])
+            """
+        dicc_normas[pos_row] = round(math.sqrt(dicc_normas[pos_row]),3) #agregamos la norma en el diccionario de normas (redondeada a 3 decimales)
+
+        """
+        if pos_row==98:
+            print(dicc_normas[pos_row])
+        """
 
         
-    def preProcessandIndex(self,texto,dicc_lexemas,peso=1,pos_row=-1): #recibe una fila y genera diccionario (pos_row, suma(tf_por_campo*peso_campo)) .
+    def preProcessandIndex(self,texto,dicc_lexemas,peso=1,pos_row=-1,tf_local={}): #recibe una fila y genera diccionario (pos_row, suma(tf_por_campo*peso_campo)) .
         
-        tf_local_campo = {} #diccionario local para gestionar las normas
+        #tf_local = {} #diccionario local para gestionar las normas
 
         """para calcular la norma:
             - manejar un diccionario local (para todas las palabras de este campo) - *se evita sobrecargar la RAM*
@@ -276,13 +293,16 @@ class InvertedIndex:
                 lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
                 #print("termino: ",lexema,"\n","pos_row:",pos_row)
                 
-                # añadimos al diccionario local (para gestionar norma)
-                if lexema in tf_local_campo:
-                    tf_local_campo[lexema] += peso
-                else:
-                    tf_local_campo[lexema] = peso
 
                 if peso!=0: #solo se debe añadir si su peso realmente influye
+
+                    # añadimos al diccionario local (para gestionar norma)
+                    if lexema in tf_local:
+                        tf_local[lexema] += peso
+                    else:
+                        tf_local[lexema] = peso
+
+
                     if pos_row==-1: 
                         if lexema in dicc_lexemas:
                             dicc_lexemas[lexema] += peso
@@ -312,7 +332,7 @@ class InvertedIndex:
                     else:
                         dicc_lexemas[lexema] = peso 
                     """
-
+        """
         # calculamos sumatoria de tf (por este campo)
         tf_campo = 0 #para que calcule norma
         for lexema in tf_local_campo: #hasta aquí, solo tenemos el peso (en crudo) de cada palabra, para las normas necesitamos *log_10(1+peso)*
@@ -320,7 +340,7 @@ class InvertedIndex:
 
         #print("tf_campo:",tf_campo)
         return tf_campo # term_frequency (por campo)
-
+        """
     
         #print(dicc_lexemas)
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
