@@ -61,9 +61,9 @@ class InvertedIndex:
         #print(self.stopList)
     
     def preProcessCSV(self,ruta_archivo):
-        cont = 0
-        pos_row = 0
-        tamano_bytes = os.path.getsize(ruta_archivo)
+        #cont = 0
+        pos_row = 0 # pos de fila que se está leyendo
+        tamano_bytes = os.path.getsize(ruta_archivo) # total de bytes en el csv
         
             
         # Abrir el archivo en modo lectura
@@ -84,7 +84,7 @@ class InvertedIndex:
 
             normas = {} # diccionario para normas
 
-            while tamano_bytes-3>=pos_row:
+            while tamano_bytes>pos_row:#-3>=pos_row:
                 pos_row = self.getBufferIndex(pos_row,archivo,cont_buffer,normas) #parametro i para nro de archivo .json
                 
                 #print(pos_row)
