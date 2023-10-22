@@ -18,6 +18,6 @@ def read_index(nro_index:int)->dict:
 
 """casos de prueba"""
 #print("Indice 1:", read_index(1))
-#print("Indice 2:", read_index(2))
+#print("Indice 2:", read_index(6))
 
 
