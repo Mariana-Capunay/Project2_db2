@@ -126,11 +126,11 @@ def MergeBasico(index1:int, index2:int) -> None: #lo unico que hace es escribir
     #time.sleep(10)
     print("Bloque2: ",result2)
 
-    write_index(index1*100,result1)
-    write_index(index2*100,result2)
+    write_index(index1,result1)
+    write_index(index2,result2)
 
 
-for i in range (1,8,2): #prueba con primeros 4 pares de archivos
+for i in range (1,6,2): #prueba con primeros 3 pares de archivos
     MergeBasico(i,i+1)
 #MergeBasico(3,4)
 #MergeBasico(5,6)
