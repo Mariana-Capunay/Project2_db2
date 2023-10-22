@@ -4,7 +4,7 @@ ruta_indices = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA
 
 
 def read_json(nombre_archivo:str)->dict:
-    with open(ruta_indices+"/"+nombre_archivo,'r') as archivo:
+    with open(ruta_indices+ "\\" + nombre_archivo,'r') as archivo:
         result = json.load(archivo)
     return result
 
@@ -15,5 +15,9 @@ def read_index(nro_index:int)->dict:
         nro_index_str = "0"+nro_index_str
     return read_json("index"+nro_index_str+".json")
 
-print("Indice 1:", read_index(1))
-print("Indice 2:", read_index(2))
+
+"""casos de prueba"""
+#print("Indice 1:", read_index(1))
+#print("Indice 2:", read_index(2))
+
+
