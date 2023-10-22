@@ -4,13 +4,13 @@ import sys
 import json
 import time
 
-print(read_index(1))
+#print(read_index(1)) #solo es una prueba
 
 def isFull(index:dict, len1: int, len2:int) -> bool: #evalua si un dict se llenó (considerando longitud de los que dict's que se hacen merge)
     return len(json.dumps(index).encode('utf-8'))>=len1 or len(json.dumps(index).encode('utf-8'))>=len2
 
 
-def MergeBasico(index1:int, index2:int) -> None: #lo unico que hace es escribir
+def BasicMerge(index1:int, index2:int) -> None: #lo unico que hace es escribir
     posting1 = read_index(index1)
     posting2 = read_index(index2)
 
@@ -130,8 +130,55 @@ def MergeBasico(index1:int, index2:int) -> None: #lo unico que hace es escribir
     write_index(index2,result2)
 
 
+"""
 for i in range (1,6,2): #prueba con primeros 3 pares de archivos
-    MergeBasico(i,i+1)
+    BasicMerge(i,i+1)
 #MergeBasico(3,4)
 #MergeBasico(5,6)
+"""
+
+
+# merge general (que combina de 4 en 4, 8 en 8, 16 en 16, .... , 2^k en 2^k)
+def Merge(index1:int, index2:int) -> None: # index1: extremo izquierdo , index2: extremo derecho 
+    # *idea*: verificar rango entre los que se encuentran index1, index2 
+    return None
+
+# ejemplos de llamada a Merge
+Merge(1,8) #combina los 8 primeros bloques (para esto ya se deben haber ordenado de 4 en 4 y de 2 en dos - previamente )
+Merge(9,16) #combina los bloques del 9 al 16 (para esto ya se deben haber ordenado de 4 en 4 y de 2 en dos - previamente )
+
+"""
+    Merge siempre se llama así -> Merge(2^k+1, 2^i)
+    - Llamadas para bloques de 2 en 2:
+        .Merge(1,2)
+        .Merge(3,4)
+        .Merge(5,6)
+        .Merge(7,8)
+    - Llamadas para bloques de 4 en 4:
+        .Merge(1,4)
+        .Merge(5,8)
+    - Llamadas para bloques de 8 en 8:
+        .Merge(1,8)
+
+    ### Cómo hacer si no tenemos un nro de bloques potencia de 2?
+        - Ejemplo - 14 bloques:
+            Llamadas para bloques de 2 en 2:
+                . Merge(1,2)
+                . Merge(3,4)
+                . Merge(5,6)
+                . Merge(7,8)
+                . Merge(9,10)
+                . Merge(11,12)
+                . Merge(13,14) 
+            Llamadas para bloques de 4 en 4:
+                . Merge(1,4)
+                . Merge(5,8)
+                . Merge(9,12)
+                . Merge(13,14)? --> NO!, ya está ordenado (si fueran 15?)
+            Llamadas para bloques de 8 en 8:
+                . Merge(1,8)
+                . Merge(9,14) --> SÍ!, hay que ordenar (pero cómo?)
+            Llamadas para bloques de 16 en 16:
+                . Merge(1,14) --> SÍ, hay que ordenar (pero cómo?)
+"""
 
