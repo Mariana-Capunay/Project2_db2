@@ -1,0 +1,37 @@
+// probar uso de iteradores en diccionarios
+def MergeBasico(index1:int, index2:int) -> None: #lo unico que hace es escribir
+    posting1 = read_index(index1)
+    posting2 = read_index(index2)
+
+    # se calcula tamaño de cada posting
+    len1 = len(json.dumps(posting1).encode('utf-8'))
+    len2 = len(json.dumps(posting2).encode('utf-8'))
+
+
+    print("posting1: ",posting1)
+    print("posting2: ",posting2)
+    print(len1)
+    print(len2)
+
+    result1 = result2 = {} #para nuevos diccionarios
+
+    # iteradores para cada posting list
+    i1 = iter(posting1.items())
+    i2 = iter(posting2.items())
+    #print (next(i1))
+    clave, valor = next(i1)
+    clave2, valor2 = next(i2)
+    print(clave,valor)
+    print(clave2,valor2)
+
+
+// probar recorrido con iteradores
+dicc = {"hola":2,"mundo":3}
+i = iter(dicc.items())
+while True:
+    try:
+        key,value = next(i)
+        print(key,value)
+    except StopIteration:
+        print("Se llegó al final")
+        break
