@@ -249,25 +249,30 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
         #print(isBlockFull)
 
         if isBlockFull: # escribe el bloque, solo si se llenó
-            """
+            
             if contador==index2: # por si aun faltan añadir elementos a ultimo bloque
                 if token1==token2:
                     valor1.update(valor2)
+                    result[token1] = valor1
 
                     try:
-                        key1,valor1 = next(i1)
+                        token1,valor1 = next(i1)
                     except:
                         mitad_llena = 1 # se recorrió toda primera mitad
+
+                    try:
+                        token2, valor2 = next(i2)
+                    except:
+                        mitad_llena = 2 # se recorrió toda la segunda mitad
                         
             else:
-"""
-            write_index(contador,result,ruta_destino) #escribe el indice (una vez que el puntero se llena)
-            #print(result)
-            result = {} #diccionario vacio
+                write_index(contador,result,ruta_destino) #escribe el indice (una vez que el puntero se llena)
+                #print(result)
+                result = {} #diccionario vacio
 
-            # primero escribe en index_contador.json y luego aumenta el contador
-            #print(contador) 
-            contador+=1  # cada vez que se llena un diccionario se aumenta el contador (así se envía a escribir)
+                # primero escribe en index_contador.json y luego aumenta el contador
+                #print(contador) 
+                contador+=1  # cada vez que se llena un diccionario se aumenta el contador (así se envía a escribir)
     
     #print("nro_bloque_2:",nro_bloque_2)
     
@@ -422,7 +427,7 @@ BasicMerge(7,8,"Initial\\","Merge2\\")
 #BasicMerge(1,2,"Initial\\","Merge2\\")
 #BasicMerge(3,4,"Initial\\","Merge2\\")
 
-Merge(5,8,"Merge2\\","Merge4\\")
-#Merge(5,8,"Merge2\\","Merge4\\")
 #Merge(1,4,"Merge2\\","Merge4\\")
+#Merge(5,8,"Merge2\\","Merge4\\")
+Merge(1,8,"Merge4\\","Merge8\\")
 #BasicMerge(5,8,"Initial\\","Merge2\\")
