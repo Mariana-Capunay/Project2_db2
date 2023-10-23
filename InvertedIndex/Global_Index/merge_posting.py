@@ -4,6 +4,11 @@ import sys
 import json
 import time
 
+
+def es_potencia_de_dos(numero):
+    # Un número es una potencia de 2 si y solo si tiene un solo bit establecido en su representación binaria.
+    # Por lo tanto, verificar si el número es mayor que 0 y su operación "y" lógica con su número menos 1 es igual a 0.
+    return numero > 0 and (numero & (numero - 1)) == 0
 #print(read_index(1)) #solo es una prueba
 
 def isFull(index:dict, len1: int, len2:int) -> bool: #evalua si un dict se llenó (considerando longitud de los que dict's que se hacen merge)
@@ -143,7 +148,17 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
 
     # se define bloques a leer
     nro_bloque_1:int = index1
-    nro_bloque_2:int = index1 + int((index2-index1+1)/2)
+    final:int = int(index2)
+    #print(es_potencia_de_dos(final), "potencia de 2",final)
+
+    
+    while not final%2==0:
+        final += 1
+
+        
+    nro_bloque_2:int = index1 + int((final-index1+1)/2)
+
+    print("iniciando mitad en :",nro_bloque_2)
     limit:int = nro_bloque_2 # limite para bloque1 
 
     #print(nro_bloque_1,nro_bloque_2)
@@ -198,14 +213,18 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 try:
                     token2, valor2 = next(i2)
                 except StopIteration:
-                    print("llegue al final de un bloque de la segunda mitad")
+                    print("llegue al final de un bloque de la segunda mitad",nro_bloque_2)
                     #aumenta el nro de bloque, lo lee y actualiza longitud
                     nro_bloque_2 += 1
 
                     if nro_bloque_2>index2: # segunda mitad a lo mucho, puede llegar a leer hasta bloque index2
-                        mitad_llena = 2 
+                        if mitad_llena==0:
+                            mitad_llena = 2  # verifica si se llenó otra mitad antes de asignar
+                        else:
+                            mitad_llena = 1 # si ya se llenó la anterior mitad, dejamos seteado mitad_llena=1
                     else:
                         posting2 = read_index(nro_bloque_2,ruta_origen)
+                        print("leyendo bloque",nro_bloque_2)
                         len2 = len(json.dumps(posting2).encode('utf-8'))
                         i2 = iter(posting2.items())
         
@@ -248,6 +267,8 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
         #print(result)
         #print(isBlockFull)
 
+
+
         if isBlockFull: # escribe el bloque, solo si se llenó
             
             if contador==index2: # por si aun faltan añadir elementos a ultimo bloque
@@ -266,6 +287,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                         mitad_llena = 2 # se recorrió toda la segunda mitad
                         
             else:
+                print("escribiendo bloque", contador)
                 write_index(contador,result,ruta_destino) #escribe el indice (una vez que el puntero se llena)
                 #print(result)
                 result = {} #diccionario vacio
@@ -274,6 +296,8 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 #print(contador) 
                 contador+=1  # cada vez que se llena un diccionario se aumenta el contador (así se envía a escribir)
     
+    if contador>8 and contador<12:
+        print(result, "contador:",contador)
     #print("nro_bloque_2:",nro_bloque_2)
     
     if mitad_llena==1:  # falta escribir elementos de la segunda mitad
@@ -290,7 +314,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 except StopIteration:
                     #aumenta el nro de bloque, lo lee y actualiza longitud
                     nro_bloque_2 += 1
-                    
+                    print("here",nro_bloque_2)
                     if nro_bloque_2>index2: # segunda mitad a lo mucho, puede llegar a leer hasta bloque index2
                         write_index(contador,result,ruta_destino) # ya no puede leer mas, solo escribe
                         return None #para finalizar funcion
@@ -305,7 +329,6 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 #print(isBlockFull,end='--')
             
             if isBlockFull: # escribe el bloque, solo si se llenó
-
                 if contador==index2: # por si aun faltan añadir elementos a ultimo bloque
                     while True:
                         try:
@@ -326,25 +349,30 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
 
     elif mitad_llena==2:
         print("segunda mitad está llena")
+        
+        
         # falta escribir elementos de la primera mitad
         isBlockFull = False
 
         while contador<=index2:
+            if contador>8 and contador<12:
+                print(result,"mi contador:",contador)
             while not isBlockFull:
                 result[token1] = valor1
+                print("append",token1)
                 
-                #avanza iterador 2
+                #avanza iterador 1
                 try:
                     token1, valor1 = next(i1)
                 except StopIteration:
                     #aumenta el nro de bloque, lo lee y actualiza longitud
                     nro_bloque_1 += 1
+
                     
-                    if nro_bloque_2>index2: # segunda mitad a lo mucho, puede llegar a leer hasta bloque index2
+                    if nro_bloque_1>index2: # segunda mitad a lo mucho, puede llegar a leer hasta bloque index2
                         write_index(contador,result,ruta_destino) #ya no puede leer mas, solo escribe
                         return None # para finalizar funcion
                     else:
-                    
                         posting1 = read_index(nro_bloque_1,ruta_origen)
                         len1 = len(json.dumps(posting1).encode('utf-8'))
                         i1 = iter(posting1.items())
@@ -424,10 +452,41 @@ BasicMerge(5,6,"Initial\\","Merge2\\")
 BasicMerge(7,8,"Initial\\","Merge2\\")
 
 """
-#BasicMerge(1,2,"Initial\\","Merge2\\")
-#BasicMerge(3,4,"Initial\\","Merge2\\")
 
-#Merge(1,4,"Merge2\\","Merge4\\")
-#Merge(5,8,"Merge2\\","Merge4\\")
+"""
+BasicMerge(1,2,"Initial\\","Merge2\\")
+BasicMerge(3,4,"Initial\\","Merge2\\")
+BasicMerge(5,6,"Initial\\","Merge2\\")
+BasicMerge(7,8,"Initial\\","Merge2\\")
+"""
+
+
+"""
+for i in range(1,17,2):
+    BasicMerge(i,i+1,"Initial\\","Merge2\\")
+"""
+
+
+"""
+for i in range(1,17,4):
+    Merge(i,i+3,"Merge2\\","Merge4\\")
+"""
+
+#Merge(9,12,"Merge2\\","Merge4\\")
+
+for i in range(1,17,8):
+    Merge(i,i+7,"Merge4\\","Merge8\\")
+
+
+"""
+Merge(1,4,"Merge2\\","Merge4\\")
+Merge(5,8,"Merge2\\","Merge4\\")
+"""
+
+"""
 Merge(1,8,"Merge4\\","Merge8\\")
+"""
+
+#BasicMerge(1,2,"Initial\\","Merge2\\")
+#Merge(1,3,"Merge2\\","Merge4\\")
 #BasicMerge(5,8,"Initial\\","Merge2\\")
