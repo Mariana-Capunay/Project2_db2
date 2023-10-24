@@ -71,7 +71,8 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
         result1_full = isFull(result1,len1,len2) 
         
         if result1_full:
-            print("Se completó un bloque", result1)
+            print()
+            #print("Se completó un bloque", result1)
     
     write_index(index1,result1,ruta_destino)
 
@@ -127,8 +128,8 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
             
 
     
-    print("Bloques finales:")
-    print("Bloque2: ",result1)
+    #print("Bloques finales:")
+    #print("Bloque2: ",result1)
 
     write_index(index2,result1,ruta_destino)
 
@@ -158,7 +159,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
         
     nro_bloque_2:int = index1 + int((final-index1+1)/2)
 
-    print("iniciando mitad en :",nro_bloque_2)
+    #print("iniciando mitad en :",nro_bloque_2)
     limit:int = nro_bloque_2 # limite para bloque1 
 
     #print(nro_bloque_1,nro_bloque_2)
@@ -199,7 +200,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 try:
                     token1, valor1 = next(i1)
                 except StopIteration:
-                    print("llegue al final de un bloque de la primera mitad")
+                    #print("llegue al final de un bloque de la primera mitad")
                     #aumenta el nro de bloque, lo lee y actualiza longitud
                     nro_bloque_1 += 1
 
@@ -213,7 +214,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 try:
                     token2, valor2 = next(i2)
                 except StopIteration:
-                    print("llegue al final de un bloque de la segunda mitad",nro_bloque_2)
+                    #print("llegue al final de un bloque de la segunda mitad",nro_bloque_2)
                     #aumenta el nro de bloque, lo lee y actualiza longitud
                     nro_bloque_2 += 1
 
@@ -224,7 +225,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                             mitad_llena = 1 # si ya se llenó la anterior mitad, dejamos seteado mitad_llena=1
                     else:
                         posting2 = read_index(nro_bloque_2,ruta_origen)
-                        print("leyendo bloque",nro_bloque_2)
+                        #print("leyendo bloque",nro_bloque_2)
                         len2 = len(json.dumps(posting2).encode('utf-8'))
                         i2 = iter(posting2.items())
         
@@ -287,7 +288,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                         mitad_llena = 2 # se recorrió toda la segunda mitad
                         
             else:
-                print("escribiendo bloque", contador)
+                #print("escribiendo bloque", contador)
                 write_index(contador,result,ruta_destino) #escribe el indice (una vez que el puntero se llena)
                 #print(result)
                 result = {} #diccionario vacio
@@ -301,7 +302,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
     #print("nro_bloque_2:",nro_bloque_2)
     
     if mitad_llena==1:  # falta escribir elementos de la segunda mitad
-        print("primera mitad está llena")
+        #print("primera mitad está llena")
         isBlockFull = False
 
         while contador<=index2: 
@@ -314,7 +315,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 except StopIteration:
                     #aumenta el nro de bloque, lo lee y actualiza longitud
                     nro_bloque_2 += 1
-                    print("here",nro_bloque_2)
+                    #print("here",nro_bloque_2)
                     if nro_bloque_2>index2: # segunda mitad a lo mucho, puede llegar a leer hasta bloque index2
                         write_index(contador,result,ruta_destino) # ya no puede leer mas, solo escribe
                         return None #para finalizar funcion
@@ -348,18 +349,18 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
    
 
     elif mitad_llena==2:
-        print("segunda mitad está llena")
+        #print("segunda mitad está llena")
         
         
         # falta escribir elementos de la primera mitad
         isBlockFull = False
 
         while contador<=index2:
-            if contador>8 and contador<12:
-                print(result,"mi contador:",contador)
+            #if contador>8 and contador<12:
+                #print(result,"mi contador:",contador)
             while not isBlockFull:
                 result[token1] = valor1
-                print("append",token1)
+                #print("append",token1)
                 
                 #avanza iterador 1
                 try:
@@ -394,7 +395,7 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
                 result = {} #diccionario vacio
 
                 # primero escribe en index_contador.json y luego aumenta el contador
-                print(contador) 
+                #print(contador) 
                 contador+=1  # cada vez que se llena un diccionario se aumenta el contador (así se envía a escribir)
 
     else:
@@ -474,10 +475,10 @@ for i in range(1,17,4):
 
 #Merge(9,12,"Merge2\\","Merge4\\")
 
+"""
 for i in range(1,17,8):
     Merge(i,i+7,"Merge4\\","Merge8\\")
-
-
+"""
 """
 Merge(1,4,"Merge2\\","Merge4\\")
 Merge(5,8,"Merge2\\","Merge4\\")
@@ -490,3 +491,12 @@ Merge(1,8,"Merge4\\","Merge8\\")
 #BasicMerge(1,2,"Initial\\","Merge2\\")
 #Merge(1,3,"Merge2\\","Merge4\\")
 #BasicMerge(5,8,"Initial\\","Merge2\\")
+
+#Merge(1,3,"Merge2\\","Merge4\\")
+
+
+block = 532
+for i in range (1,block,8):
+    if i+7<=block:
+        Merge(i,i+7,"Merge4\\","Merge8\\")
+	#BasicMerge(i,i+7,"Merge4\\","Merge8\\")
