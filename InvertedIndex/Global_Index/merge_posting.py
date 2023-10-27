@@ -72,12 +72,14 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
 
         result1_full = isFull(result1,len1,len2) 
         
-        if result1_full:
-            print()
+        #if result1_full:
+        #    print()
             #print("Se completó un bloque", result1)
     
+    # sale del bucle, cuando se llena el diccionario "result1"
     write_index(index1,result1,ruta_destino)
 
+    # una vez escrito en memoria, vuelve a definirlo sin elementos
     result1 = {}
          
     # en token1, token2 tengo elementos que aún no añado a ningun bloque resultante
@@ -92,7 +94,7 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
             try:
                 token1, valor1 = next(i1)
                 token2, valor2 = next(i2)
-            except StopIteration: #se terminó de recorrer un diccionario
+            except StopIteration: #se terminó de recorrer un diccionario (no sabemos cuál, pero no es problema)
                 break
 
         elif token1<token2: #añadimos el menor
@@ -103,14 +105,14 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
             except StopIteration:
                 break
 
-        else:
+        else: #añadimos el menor (en este caso, token2)
             result1[token2] = valor2
         
             try: #intentamos seguir recorriendo el posting2
                 token2, valor2 = next(i2)
             except StopIteration:
                 break
-        
+    # para salir del bucle, se debe llegar al final de uno de los diccionarios que se están combinando  
 
     # añadimos posibles elementos resultantes (del posting1)
     while True:
@@ -129,10 +131,10 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
             break
             
 
-    
     #print("Bloques finales:")
     #print("Bloque2: ",result1)
 
+    # escribimos bloque final
     write_index(index2,result1,ruta_destino)
 
 
