@@ -12,7 +12,9 @@ def es_potencia_de_dos(numero):
 #print(read_index(1)) #solo es una prueba
 
 def isFull(index:dict, len1: int, len2:int) -> bool: #evalua si un dict se llenó (considerando longitud de los que dict's que se hacen merge)
-    return len(json.dumps(index).encode('utf-8'))>=len1 or len(json.dumps(index).encode('utf-8'))>=len2
+    current_len: int = len(json.dumps(index).encode('utf-8'))
+    return current_len>=len1 or len>=len2
+    #return len(json.dumps(index).encode('utf-8'))>=len1 or len(json.dumps(index).encode('utf-8'))>=len2
 
 
 def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: #lo unico que hace es escribir
