@@ -9,14 +9,14 @@ nltk.download('punkt')
 
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = io.DEFAULT_BUFFER_SIZE
-path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
-#path_local_index = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index"
+#path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
+path_local_index = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index"
 
-ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
-#ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
+#ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
+ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
 
-ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
-#ruta_stoplist = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2"
+#ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
+ruta_stoplist = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2"
 
 
 """
@@ -72,7 +72,7 @@ class InvertedIndex:
             """ENCABEZADO"""
             encabezado_text = archivo.readline()
             pos_row += len(encabezado_text.encode("utf-8"))  # Tamaño de la línea en bytes
-            pos_row += 1 #para contar donde inicia fila que sigue
+            #pos_row += 1 #para contar donde inicia fila que sigue
 
             self.colection_header = encabezado_text.strip().split(',')
             #print('Encabezados del CSV:', self.colection_header)
@@ -88,7 +88,7 @@ class InvertedIndex:
                 pos_row = self.getBufferIndex(pos_row,archivo,cont_buffer,normas) #parametro i para nro de archivo .json
                 
                 #print(pos_row)
-                cont_buffer+=1
+                cont_buffer += 1
             print("Indices locales creados")
             """
                 for c in campos:
@@ -153,7 +153,7 @@ class InvertedIndex:
             i -= 1
         #print(i)
         #print(buffer)
-        pos_fila = 0
+        #pos_fila = 0
         tamaño_linea = 0 #no estamos considerando primera posicion
         #se lee una cantidad entera de lineas
         while ind_actual<i-1: #obtendremos cada linea 
@@ -196,10 +196,10 @@ class InvertedIndex:
             ind_result += 1
             tamaño_linea += len('\n'.encode('utf-8'))
 
-            pos_row = pos_inicio+ind_actual-tamaño_linea+pos_fila #se aumenta uno por siguiente posicion
-            #print(pos_row)
+            pos_row = pos_inicio+ind_actual-tamaño_linea #se aumenta uno por siguiente posicion
+            print(pos_row)
 
-            pos_fila += 1
+            #pos_fila += 1
             tamaño_linea = 0 #porque ya se considera posicion actual
 
             #preProcesa cada linea
