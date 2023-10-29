@@ -4,47 +4,18 @@
 
 <div class="jumbotron">
   <h1 class="display-4">FASHION DATASET!</h1>
-  <p class="serif">Podrás encontrar la mejores recomendaciones de ropas a la moda </p>
+  <p class="serif">Podrás encontrar las mejores recomendaciones de ropa a la moda </p>
   <hr class="my-4">El más eficiente</p>
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Todas las Ropas</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    </head>
-    <body>
-
-            <div class="search-container">
-              <input type="text" id="query-input" placeholder="Ingresa la Query...">
-              <input type="text" id="topk-input" placeholder="Ingresa el top K...">
-              <button id="search-button">Buscar</button>
-            </div>
-
-            <script>
-              const searchButton = document.getElementById('search-button');
-              searchButton.addEventListener('click', () => {
-                const query = document.getElementById('query-input').value;
-                const topk = document.getElementById('topk-input').value;
-                const url = `/indice-invertido?query=${query}&topk=${topk}`;
-                window.location.href = url;
-              });
-            </script>
-
-          </div>
-        
-        <script src="script.js"></script>
-    </body>
-</html>
-
-  <!-- <a class="btn btn-primary btn-lg" href="/indice-invertido" role="button">Indice Invertido</a>
-  <a class="btn btn-primary btn-lg" href="/PgAdmin" role="button">PgAdmin</a> -->
+  <div class="search-container">
+    <form action="/consulta" method="post">
+      <input type="text" name="query" placeholder="Ingresa la Query...">
+      <input type="text" name="topk" placeholder="Ingresa el top K...">
+      <button type="submit" name="action" value="Indice">Indice Invertido</button>
+      <button type="submit" name="action" value="PgAdmin"> PgAdmin</button>
+    </form>
+  </div>
 
 </div>
 
-<!-- <div class="jumbotron">
-
-</div>
-se comenta con ctrl + k + c -->
-{% endblock%}
+{% endblock %}
