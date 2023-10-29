@@ -28,25 +28,30 @@ def about():
 def resultados():
     query = request.form.get('query')
     topk = request.form.get('topk')
-    action = request.form.get('action')
-
+    #llamar a la funcion de consulta
+    start_time = time.time()
+    psql.consulta()
+    end_time = time.time()
+    tiempo_ejecucion = end_time - start_time
+    #Definiendo la variable tableHeaders
+    tableAHeaders = ["id", "gender", "masterCategory", "subCategory", "articleType", "baseColour", "season", "year", "usage", "productDisplayName"]
 
 
     #return render_template("resultados.html", resultados=resultados, tiempo_ejecucion=tiempo_ejecucion)
+    return render_template("home.html", tableAHeaders=tableAHeaders, tiempo_ejecucion=tiempo_ejecucion)
 
+    # if action == 'Indice':
+    #     return jsonify({"message": "Se ha creado el índice exitosamente"})
 
-    if action == 'Indice':
-        return jsonify({"message": "Se ha creado el índice exitosamente"})
-
-    elif action == 'PgAdmin':
-        #llamar a la funcion de consulta
-        start_time = time.time()
-        psql.consulta()
-        end_time = time.time()
-        tiempo_ejecucion = end_time - start_time
-        #mostrar los resultados
-        #return render_template("resultados.html", resultados=resultados, tiempo_ejecucion=tiempo_ejecucion)
-        return jsonify({"message": "Se ha creado el índice exitosamente", "tiempo_ejecucion": tiempo_ejecucion})
+    # elif action == 'PgAdmin':
+    #     #llamar a la funcion de consulta
+    #     start_time = time.time()
+    #     psql.consulta()
+    #     end_time = time.time()
+    #     tiempo_ejecucion = end_time - start_time
+    #     #mostrar los resultados
+    #     #return render_template("resultados.html", resultados=resultados, tiempo_ejecucion=tiempo_ejecucion)
+    #     return jsonify({"message": "Se ha creado el índice exitosamente", "tiempo_ejecucion": tiempo_ejecucion})
 
 @app.route('/PgAdmin')
 def pgAdmin():

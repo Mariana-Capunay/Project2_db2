@@ -5,17 +5,95 @@
 <div class="jumbotron">
   <h1 class="display-4">FASHION DATASET!</h1>
   <p class="serif">Podrás encontrar las mejores recomendaciones de ropa a la moda </p>
-  <hr class="my-4">El más eficiente</p>
+  <hr class="my-4">
+  <p class="lead">El más eficiente</p>
 
   <div class="search-container">
     <form action="/consulta" method="post">
-      <input type="text" name="query" placeholder="Ingresa la Query...">
-      <input type="text" name="topk" placeholder="Ingresa el top K...">
-      <button type="submit" name="action" value="Indice">Indice Invertido</button>
-      <button type="submit" name="action" value="PgAdmin"> PgAdmin</button>
+      <input type="text" id="searchQuery" placeholder="Ingresa la Query...">
+      <input type="number" id="topk" placeholder="Ingresa el top K...">
     </form>
   </div>
 
+  <div id="scroll-target" class="container">
+    <div class="button-container">
+      <button id="tablaA" class="selection-button active" onclick="seleccionarTabla('tablaA')">PostgreSQL</button>
+      <button id="tablaB" class="selection-button" onclick="seleccionarTabla('tablaB')">Index Invert</button>
+    </div> 
+  </div>
+
+  <div class="tiempo-ejecucion">
+    Tiempo de ejecución de la consulta: <span id="tiempo_consulta">0</span> segundos
+  </div>
+
+  <div class="pagination-buttons">
+    <button class="pagination-button disabled" onclick="previousPage()">Previous</button>
+    <button class="pagination-button" onclick="nextPage()">Next</button>
+  </div>
+
 </div>
+
+<!-- aquí se mostrará la tabla seleccionada -->
+<div id="tablaA-container" class="tabla-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+      </tr>
+    </thead>
+    <tbody id="tablaA-body">
+    </tbody>
+  </table>
+</div>
+
+<div id="tablaB-container" class="tabla-container" style="display: none;">
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Gender</th>
+        <th>Master Category</th>
+        <th>Sub Category</th>
+        <th>Article Type</th>
+        <th>Base Colour</th>
+        <th>Season</th>
+        <th>Year</th>
+        <th>Usage</th>
+        <th>Product Display Name</th>
+      </tr>
+    </thead>
+    <tbody id="tablaB-body">
+    </tbody>
+  </table>
+</div>
+
+<script>
+function seleccionarTabla(tabla) {
+  const tablaA = document.getElementById('tablaA');
+  const tablaB = document.getElementById('tablaB');
+  const tablaAContainer = document.getElementById('tablaA-container');
+  const tablaBContainer = document.getElementById('tablaB-container');
+
+  if (tabla === 'tablaA') {
+    tablaA.classList.add('active');
+    tablaB.classList.remove('active');
+    tablaAContainer.style.display = 'block';
+    tablaBContainer.style.display = 'none';
+  } else if (tabla === 'tablaB') {
+    tablaA.classList.remove('active');
+    tablaB.classList.add('active');
+    tablaAContainer.style.display = 'none';
+    tablaBContainer.style.display = 'block';
+  }
+}
+
+function previousPage() {
+  // implementa la lógica para ir a la página anterior
+}
+
+function nextPage() {
+  // implementa la lógica para ir a la página siguiente
+}
+</script>
 
 {% endblock %}
