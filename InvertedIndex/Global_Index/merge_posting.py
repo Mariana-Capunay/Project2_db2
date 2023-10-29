@@ -3,6 +3,7 @@ from write_index import write_index #importamos funcion para escribir un bloque 
 import sys
 import json
 import time
+import math
 
 
 def es_potencia_de_dos(numero):
@@ -13,7 +14,7 @@ def es_potencia_de_dos(numero):
 
 def isFull(index:dict, len1: int, len2:int) -> bool: #evalua si un dict se llenó (considerando longitud de los que dict's que se hacen merge)
     current_len: int = len(json.dumps(index).encode('utf-8'))
-    return current_len>=len1 or len>=len2
+    return current_len>=len1 or current_len>=len2
     #return len(json.dumps(index).encode('utf-8'))>=len1 or len(json.dumps(index).encode('utf-8'))>=len2
 
 
@@ -43,7 +44,6 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
     # definimos el inicio de cada posting (para empezar a recorrer)
     token1, valor1 = next(i1)
     token2, valor2 = next(i2)
-
     
     result1_full = False
 
@@ -97,7 +97,7 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
             except StopIteration: #se terminó de recorrer un diccionario (no sabemos cuál, pero no es problema)
                 break
 
-        elif token1<token2: #añadimos el menor
+        elif token1 < token2: #añadimos el menor
             result1[token1] = valor1
 
             try:#intentamos seguir recorriendo el posting1
@@ -142,13 +142,12 @@ def BasicMerge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> Non
 for i in range (1,10,2): #prueba con primeros 3 pares de archivos
     BasicMerge(i,i+1)
 """
-#MergeBasico(3,4)
 #MergeBasico(5,6)
 
 #BasicMerge(1,2)
 
 # merge general (que combina de 4 en 4, 8 en 8, 16 en 16, .... , 2^k en 2^k)
-def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # index1: extremo izquierdo , index2: extremo derecho 
+def Merge1(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # index1: extremo izquierdo , index2: extremo derecho 
     # *idea*: verificar rango entre los que se encuentran index1, index2 
 
     # se define bloques a leer
@@ -405,8 +404,94 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str) -> None: # 
     else:
         print("no llené ninguna mitad")
         
+
+def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str):
+    print("Realizando merge")
+    posting1 = read_index(initB1,ruta_origen)
+    posting2 = read_index(initB2,ruta_origen)
     
-#Merge(1,4)
+    # se calcula tamaño de cada posting
+    len1 = len(json.dumps(posting1).encode('utf-8'))
+    len2 = len(json.dumps(posting2).encode('utf-8'))
+
+    #para nuevos diccionarios
+    result = {}
+
+    # iteradores para cada posting list
+    i1 = iter(posting1.items())
+    i2 = iter(posting2.items())
+
+
+def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str):
+    # Definir parámetros iniciales
+    last_doc = index2
+    nroRound = -1
+    completed = False
+    
+    while not completed:
+        nroRound += 1                   # El número de rondas a partir de 0
+        completed = True
+        maxBlock = pow(2, nroRound)     # Tamaño máximo del bloque por ronda
+        nro_bloque_1 = 1
+        nro_bloque_2 = 0
+
+        print("MaxSize:", maxBlock)
+        while True:
+            nro_bloque_2 = nro_bloque_1 + maxBlock
+            # Definición de los rangos que cubrirán los dos bloques a combinar
+            initB1 = nro_bloque_1
+            endB1 = nro_bloque_1 + maxBlock - 1
+            
+            initB2 = nro_bloque_2
+            endB2 = nro_bloque_2 + maxBlock - 1
+            
+            # Prueba si es posible leer el rango completo del bloque
+            try:
+                read_index(nro_bloque_1+maxBlock-1,ruta_origen)
+                print("Lectura de bloque 1 exitosa")
+                print(f"Range {initB1} - {endB1} accepted")
+            except: 
+                print("Lectura de bloque 1 fallida")
+                print(f"Range {initB1} - {endB1} denied")
+
+                # Si el último bloque de la colección se encuentra dentro el rango, limitarlo
+                if initB1 <= last_doc:
+                    endB1 = last_doc
+                    print("Lectura de bloque 1 reparada")
+                    print(f"Range {initB1} - {endB1} accepted")
+                    # Transferir el bloque 1 si no se logra leer por completo
+                    print("Transfiriendo bloque 1", '\n')        
+                break
+            # Si en una ronda se lee el segundo bloque al menos una vez, no ha terminado aún
+            completed = False               
+            try:
+                read_index(nro_bloque_2+maxBlock-1,ruta_origen)
+                print("Lectura de bloque 2 exitosa")
+                print(f"Range {initB2} - {endB2} accepted")
+                rangedMerge(initB1, endB1, initB2, endB2, ruta_origen, ruta_destino)
+            except: 
+                print("Lectura de bloque 2 fallida")
+                print(f"Range {initB2} - {endB2} denied")
+                if initB2 <= last_doc:
+                    endB2 = last_doc
+                    print("Lectura de bloque 2 reparada")
+                    print(f"Range {initB2} - {endB2} accepted")
+                    rangedMerge(initB1, endB1, initB2, endB2, ruta_origen, ruta_destino)
+                else:
+                    print("Transfiriendo bloque 1", '\n')
+                break
+                
+            maxBlock = pow(2, nroRound)
+            nro_bloque_1 = nro_bloque_2 + maxBlock
+            if completed:
+                break
+
+
+ruta_origen = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
+
+ruta_destino = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
+
+Merge(1, 5,"","")
 #Merge(33,64)
 
 # ejemplos de llamada a Merge
@@ -498,9 +583,10 @@ Merge(1,8,"Merge4\\","Merge8\\")
 
 #Merge(1,3,"Merge2\\","Merge4\\")
 
-
+"""
 block = 532
 for i in range (1,block,8):
     if i+7<=block:
         Merge(i,i+7,"Merge4\\","Merge8\\")
 	#BasicMerge(i,i+7,"Merge4\\","Merge8\\")
+"""
