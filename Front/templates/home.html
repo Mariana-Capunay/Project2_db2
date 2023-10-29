@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron">
+  <h1 class="display-4">FASHION DATASET!</h1>
+  <p class="serif">Podrás encontrar la mejores recomendaciones de ropas a la moda </p>
+  <hr class="my-4">El más eficiente</p>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Todas las Ropas</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Ingresa la Query...">
+            <input type="text" id="search-bar" placeholder="Ingresa el top K...">
+            <a class="btn btn-primary btn-lg" href="/indice-invertido" role="button">Indice Invertido</a>
+            <a class="btn btn-primary btn-lg" href="/PgAdmin" role="button">PgAdmin</a>
+        </div>
+        
+        <script src="script.js"></script>
+    </body>
+</html>
+
+  <!-- <a class="btn btn-primary btn-lg" href="/indice-invertido" role="button">Indice Invertido</a>
+  <a class="btn btn-primary btn-lg" href="/PgAdmin" role="button">PgAdmin</a> -->
+
+</div>
+
+<!-- <div class="jumbotron">
+
+</div>
+se comenta con ctrl + k + c -->
+{% endblock%}
