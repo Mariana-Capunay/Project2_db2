@@ -20,10 +20,13 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.route('/todas-ropas')
+@app.route('/indice-invertido')
 def todas_ropas():
-    return render_template("todas-ropas.html")
+    return render_template("indice-invertido.html")
 
+@app.route('/PgAdmin')
+def pgAdmin():
+    return render_template("pgAdmin.html")
 # Make sure this we are executing this file
 if __name__ == '__main__':
     app.run(debug=True)
