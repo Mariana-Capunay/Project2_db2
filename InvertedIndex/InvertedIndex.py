@@ -197,7 +197,7 @@ class InvertedIndex:
             tamaño_linea += len('\n'.encode('utf-8'))
 
             pos_row = pos_inicio+ind_actual-tamaño_linea #se aumenta uno por siguiente posicion
-            print(pos_row)
+            #print(pos_row)
 
             #pos_fila += 1
             tamaño_linea = 0 #porque ya se considera posicion actual
