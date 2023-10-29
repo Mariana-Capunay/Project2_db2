@@ -38,6 +38,9 @@
 8. Repetir pasos del 1 al 7 por cada buffer
 9. Retornar nombre de archivo en el que está cada buffer
 10. Hacer Merge con todos los buckets  (mezcla en big Index)
+    
+# Json to Csv
+Por temas de facilidad y actualización de funciones considerando la longitud variable  usaremos en el manejo de la data archivos json.
 
 # Query Idea
 1. Obtiene indice invertido de la query
