@@ -16,19 +16,10 @@
 ### Backend
 5. [Construcción del índice invertido](#id5)
   ![norma](images/norrma.jpg)
-
-
-
-
-
-
-
-
-
-
-
-
-
+  ![poting](images/posting_list.jpg)
+  ![binary](images/binary_search.jpg)
+  ![creacion](images/creacion_de_valor.jpg)
+  ![apimi](images/merge_spimi.jpg)
 
 7. [Manejo de memoria secundaria](#id6)
 8. [Ejecución óptima de consultas](#id7)
