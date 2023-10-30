@@ -18,7 +18,7 @@
   ![norma](images/norrma.jpg)
   ![poting](images/posting_list.jpg)
   ![binary](images/binary_search.jpg)
-  ![creacion](images/creacion_de_valor.jpg)
+  ![creacion](images/crearcion_de_valor.jpg)
   ![apimi](images/merge_spimi.jpg)
 
 7. [Manejo de memoria secundaria](#id6)
