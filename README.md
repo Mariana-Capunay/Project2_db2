@@ -18,7 +18,8 @@
   ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/68ba9e12-6761-48fd-b1bf-6b4b3e2a77f2)
   ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/a9e361fd-31c2-499c-969e-925efc77349e)
   ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/32144377-50dd-4869-a234-ca958c726704)
-  ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/4e898f6f-c08c-432a-865b-f32feb46caba)
+  ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/be5ea0db-ab3b-4bf8-b166-9ab7c49acddd)
+
 
 
 
