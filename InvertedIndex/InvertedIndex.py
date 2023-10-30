@@ -39,8 +39,7 @@ ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGI
 
 class InvertedIndex:
     colection_header = []
-    
-    pesos = [0,1,0,0,1,1,0,1,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
+    pesos = [0,1,1,1,1,1,1,1,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
 
     def __init__(self):
