@@ -15,7 +15,8 @@
 4. [Como se realiza el KNN Search y el Range Search](#id4)
 ### Backend
 5. [Construcción del índice invertido](#id5)
-   ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/35ab79c8-6c6f-4c99-87ae-9a4b6a1d7ae1)
+   ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/bf519701-ab06-41f2-b8a2-63538d720e8f)
+
 7. [Manejo de memoria secundaria](#id6)
 8. [Ejecución óptima de consultas](#id7)
 ### Análisis de la maldición de la dimensionalidad y como mitigarlo
