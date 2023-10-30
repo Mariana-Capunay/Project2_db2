@@ -3,7 +3,7 @@ import os
 import io
 import json
 import math
-
+import numpy as np
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
 
@@ -39,14 +39,85 @@ ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGI
 
 class InvertedIndex:
     colection_header = []
-    #creando funcion para hallar los pesos
     pesos = [0,1,1,1,1,1,1,1,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
 
     def __init__(self):
         self.setStoplist(ruta_stoplist+"\stoplist.txt") #definimos StopList
-
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
+
+    def calculo_tf(self, coleccion):# Contar la frecuencia de cada término en cada documento
+        doc_tf = {} #diccionario para almacenar tf de cada palabra (en este documento)
+        total_tf = {} #para calcular la norma}
+        for id_doc,doc in enumerate(coleccion):
+            #cuantas veces aparece cada palabra en el documento
+            doc_term_freq = {}
+            for term in doc:
+                if term in doc_term_freq:
+                    doc_term_freq[term] += 1
+                    total_tf[term] += 1
+                else:
+                    if term not in total_tf:
+                        total_tf[term] = 1
+                    doc_term_freq[term] = 1
+            doc_tf[id_doc] = doc_term_freq
+
+        total_tf = sorted(total_tf.items(), key=lambda x: x[1], reverse=True) #ordenamos por tf
+        return doc_tf, total_tf
+
+    def calculo_idf(self, term, idf_freq, term_freq, N):
+        if term in idf_freq: #si ya existe para term
+            idf = idf_freq[term]
+        else:
+            df = 0 #en cuantos docs aparece term
+            for num in range(N):
+                if term in term_freq[num]:
+                    df += 1
+            if df == 0:
+                idf = 0
+            else:
+                idf = np.log10((N / df))
+            idf_freq[term] = idf
+        return idf
+
+    def compute_tfidf(self,data, collection):
+        tfidf = {}  # Diccionario para almacenar los resultados TF-IDF
+        idf_freq = {}  # Diccionario para almacenar la frecuencia inversa de documentos (IDF)
+        index = {}  # Diccionario para almacenar el índice de términos
+        length = {}  # Diccionario para almacenar la longitud de vectores normalizados
+
+        term_freq, orden_keywords = self.calculo_tf(collection)# Contar la frecuencia de cada término en cada documento
+
+        for doc_id, doc in enumerate(collection):
+            nameDoc = str(data.iloc[int(doc_id), 0])
+            smoothed_tf = []
+
+            for tup_term in orden_keywords:
+                term = tup_term[0]
+                # Cálculo del índice
+                if term in term_freq[doc_id]:
+                    tf_t_d = term_freq[doc_id][term]
+                    if term_freq[doc_id][term] != 0:
+                        if term in index:
+                            index[term].append((nameDoc, tf_t_d))
+                        else:
+                            index[term] = [(nameDoc, tf_t_d)]
+                    # Cálculo del TF
+                    tf = np.log10(tf_t_d + 1)
+                    # Cálculo del IDF
+                    idf = self.calculo_idf(term, idf_freq, term_freq, len(collection))
+                    smoothed_tf.append(round(tf * idf, 3))
+                else:
+                    smoothed_tf.append(0)
+
+            # Cálculo de la longitud del vector (norma)
+            array = np.array(list(smoothed_tf))
+            length[nameDoc] = np.linalg.norm(array)
+            tfidf[nameDoc] = smoothed_tf
+
+        return length, idf_freq, index
+
+
 
     def setStoplist(self,nombre):
         stop_words = open(nombre, "r", encoding="latin1") 

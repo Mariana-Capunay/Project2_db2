@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import time
 import psycopg2
 import psql_connection as psql
-
+import csv
 
 app = Flask(__name__)
 
@@ -28,30 +28,27 @@ def about():
 def resultados():
     query = request.form.get('query')
     topk = request.form.get('topk')
-    #llamar a la funcion de consulta
-    start_time = time.time()
-    psql.consulta()
-    end_time = time.time()
-    tiempo_ejecucion = end_time - start_time
-    #Definiendo la variable tableHeaders
-    tableAHeaders = ["id", "gender", "masterCategory", "subCategory", "articleType", "baseColour", "season", "year", "usage", "productDisplayName"]
+    # Define la configuración de la base de datos (modificar)
+    db_config = {
+    'dbname': 'test_connection',
+    'user': 'postgres',
+    'password': '76591212',
+    'host': 'localhost',
+    'port': 5432
+    }
+    # Realiza la consulta SQL en tu base de datos
+    connection = psycopg2.connect(**db_config)
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM styles WHERE productDisplayName ILIKE %s LIMIT %s", ('%' + query + '%', topk))
+    results = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    # También obtén el tiempo de ejecución 
+    return render_template("resultados.html", results=results, query=query, topk=topk)
 
 
-    #return render_template("resultados.html", resultados=resultados, tiempo_ejecucion=tiempo_ejecucion)
-    return render_template("home.html", tableAHeaders=tableAHeaders, tiempo_ejecucion=tiempo_ejecucion)
-
-    # if action == 'Indice':
-    #     return jsonify({"message": "Se ha creado el índice exitosamente"})
-
-    # elif action == 'PgAdmin':
-    #     #llamar a la funcion de consulta
-    #     start_time = time.time()
-    #     psql.consulta()
-    #     end_time = time.time()
-    #     tiempo_ejecucion = end_time - start_time
-    #     #mostrar los resultados
-    #     #return render_template("resultados.html", resultados=resultados, tiempo_ejecucion=tiempo_ejecucion)
-    #     return jsonify({"message": "Se ha creado el índice exitosamente", "tiempo_ejecucion": tiempo_ejecucion})
+    
 
 @app.route('/PgAdmin')
 def pgAdmin():
