@@ -4,35 +4,96 @@
 
 <div class="jumbotron">
   <h1 class="display-4">FASHION DATASET!</h1>
-  <p class="serif">Podrás encontrar la mejores recomendaciones de ropas a la moda </p>
-  <hr class="my-4">El más eficiente</p>
+  <p class="serif">Podrás encontrar las mejores recomendaciones de ropa a la moda </p>
+  <hr class="my-4">
+  <p class="lead">El más eficiente</p>
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Todas las Ropas</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    </head>
-    <body>
-        <div class="search-container">
-            <input type="text" id="search-bar" placeholder="Ingresa la Query...">
-            <input type="text" id="search-bar" placeholder="Ingresa el top K...">
-            <a class="btn btn-primary btn-lg" href="/indice-invertido" role="button">Indice Invertido</a>
-            <a class="btn btn-primary btn-lg" href="/PgAdmin" role="button">PgAdmin</a>
-        </div>
-        
-        <script src="script.js"></script>
-    </body>
-</html>
+  <div class="search-container">
+    <form action="/consulta" method="post">
+      <input type="text" id="searchQuery" placeholder="Ingresa la Query...">
+      <input type="number" id="topk" placeholder="Ingresa el top K...">
+    </form>
+  </div>
 
-  <!-- <a class="btn btn-primary btn-lg" href="/indice-invertido" role="button">Indice Invertido</a>
-  <a class="btn btn-primary btn-lg" href="/PgAdmin" role="button">PgAdmin</a> -->
+  <div id="scroll-target" class="container">
+    <div class="button-container">
+      <button id="tablaA" class="selection-button active" onclick="seleccionarTabla('tablaA')">PostgreSQL</button>
+      <button id="tablaB" class="selection-button" onclick="seleccionarTabla('tablaB')">Index Invert</button>
+    </div> 
+  </div>
 
-</div>
+  <div class="tiempo-ejecucion">
+    Tiempo de ejecución de la consulta: <span id="tiempo_consulta">0</span> segundos
+  </div>
 
-<!-- <div class="jumbotron">
+  <div class="pagination-buttons">
+    <button class="pagination-button disabled" onclick="previousPage()">Previous</button>
+    <button class="pagination-button" onclick="nextPage()">Next</button>
+  </div>
 
 </div>
-se comenta con ctrl + k + c -->
-{% endblock%}
+
+<!-- aquí se mostrará la tabla seleccionada -->
+<div id="tablaA-container" class="tabla-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+      </tr>
+    </thead>
+    <tbody id="tablaA-body">
+    </tbody>
+  </table>
+</div>
+
+<div id="tablaB-container" class="tabla-container" style="display: none;">
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Gender</th>
+        <th>Master Category</th>
+        <th>Sub Category</th>
+        <th>Article Type</th>
+        <th>Base Colour</th>
+        <th>Season</th>
+        <th>Year</th>
+        <th>Usage</th>
+        <th>Product Display Name</th>
+      </tr>
+    </thead>
+    <tbody id="tablaB-body">
+    </tbody>
+  </table>
+</div>
+
+<script>
+function seleccionarTabla(tabla) {
+  const tablaA = document.getElementById('tablaA');
+  const tablaB = document.getElementById('tablaB');
+  const tablaAContainer = document.getElementById('tablaA-container');
+  const tablaBContainer = document.getElementById('tablaB-container');
+
+  if (tabla === 'tablaA') {
+    tablaA.classList.add('active');
+    tablaB.classList.remove('active');
+    tablaAContainer.style.display = 'block';
+    tablaBContainer.style.display = 'none';
+  } else if (tabla === 'tablaB') {
+    tablaA.classList.remove('active');
+    tablaB.classList.add('active');
+    tablaAContainer.style.display = 'none';
+    tablaBContainer.style.display = 'block';
+  }
+}
+
+function previousPage() {
+  // implementa la lógica para ir a la página anterior
+}
+
+function nextPage() {
+  // implementa la lógica para ir a la página siguiente
+}
+</script>
+
+{% endblock %}
