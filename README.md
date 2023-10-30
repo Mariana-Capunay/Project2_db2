@@ -15,7 +15,7 @@
 4. [Como se realiza el KNN Search y el Range Search](#id4)
 ### Backend
 5. [Construcción del índice invertido](#id5)
-  ![image](images/norma.jpg)
+  ![norma](images/norma.jpg)
 
 
 
