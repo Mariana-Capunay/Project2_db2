@@ -5,7 +5,7 @@
 | Mariana Capuñay   | Procesamiento del CSV-Creación de índice invertido, Manejo de índices, Implementación de SPIMI, Merge |
 | Manyory Cueva    | Frontend, Ponderación de pesos en postgresql  | 
 | Jaime Ramos    |  Creación del índice invertido, Análisis de normas por fila, Conexión con postgresql, Análisis de SPIMI, Merge | 
-| Gustavo Orosco  | Binary search para buscar palabras, Generación de vectores caracteristicos e indices para registros de longitud variable, KNN secuencial | 
+| Gustavo Orosco  |  | 
 
 ## Table of Contents  
 ### Introducción
@@ -15,8 +15,7 @@
 4. [Como se realiza el KNN Search y el Range Search](#id4)
 ### Backend
 5. [Construcción del índice invertido](#id5)
-  ![image](image/norma.jpg)
-
+  ![image](imeges/norrma.jpg)
 
 
 
