@@ -16,7 +16,8 @@
 ### Backend
 5. [Construcción del índice invertido](#id5)
   ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/68ba9e12-6761-48fd-b1bf-6b4b3e2a77f2)
-  ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/ec8445b4-b0ea-4cac-a95f-3108c8c3aade)
+  ![image](https://github.com/Mariana-Capunay/Project2_db2/assets/91238621/6f727915-21a4-4f46-947b-efcd8aae41f8)
+
 
 
 
