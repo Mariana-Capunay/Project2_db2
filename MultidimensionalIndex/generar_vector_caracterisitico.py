@@ -48,6 +48,7 @@ def load_images(n: int):
 def get_vector(n: int):
     file = open(position_data_file, "rb")
     file.seek(n*INTEGER_BYTES)
+    return struct.pack('f'*len(img_encoding), *img_encoding)
 
 #print(load_images(10))
 
