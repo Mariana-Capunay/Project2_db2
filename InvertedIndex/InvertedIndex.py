@@ -133,9 +133,11 @@ class InvertedIndex:
         #print(self.stopList)
     
     def preProcessCSV(self,ruta_archivo):
+        tamano_bytes = os.path.getsize(ruta_archivo) # total de bytes en el csv
+        
         #cont = 0
         pos_row = 0 # pos de fila que se está leyendo
-        tamano_bytes = os.path.getsize(ruta_archivo) # total de bytes en el csv
+        
         
             
         # Abrir el archivo en modo lectura
