@@ -148,7 +148,7 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
 
   6. Enviar el diccionario local (del buffer) a disco
   <p align="center">
-    <img src="images/posting_list.jpg" alt="Posting List local-Indice invertido" width="800" height="">
+    <img src="images/posting.jpg" alt="Posting List local-Indice invertido" width="800" height="">
   </p>
 
   7. Repetir pasos del 1 al 6 por cada buffer
