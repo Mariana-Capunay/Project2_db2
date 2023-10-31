@@ -15,19 +15,12 @@
 4. [Como se realiza el KNN Search y el Range Search](#id4)
 ### Backend
 5. [Construcción del índice invertido](#id5)
-  ![norma](images/norma.jpg)
-
-
-
-
-
-
-
-
-
-
-
-
+5. [Construcción del índice invertido](#id5)
+  ![norma](images/norrma.jpg)
+  ![poting](images/posting_list.jpg)
+  ![binary](images/binary_search.jpg)
+  ![creacion](images/crearcion_de_valor.jpg)
+  ![apimi](images/merge_spimi.jpg)
 
 
 7. [Manejo de memoria secundaria](#id6)
