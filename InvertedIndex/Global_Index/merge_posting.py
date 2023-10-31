@@ -667,7 +667,8 @@ ruta_origen = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Pr
 
 ruta_destino = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
 
-#Merge(1, 5,"","")
+
+#Merge(1, 5,"","")      # Ejecución completa
 #rangedMerge(1,1, 2, 2, "", "")
 #rangedMerge(3, 3, 4, 4, "", "")
 rangedMerge(1, 2, 3, 4, "", "")

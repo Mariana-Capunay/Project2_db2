@@ -187,6 +187,17 @@ pos_row = tamaño de bytes leídos + 1
     <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="500" height="">
   </p>  
 
+## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo
+
+## 9. Diseño del índice con PostgreSQL/MongoDB
+
+## 10. Análisis comparativo con su propia implementación
+
+## 11. Screenshots de la GUI
+  - Pantalla principal
+  <p align="center">
+    <img src="images/mainpage.PNG" alt="Página principal" width="700" height="">
+  </p>
 
 # Query Idea
 1. Obtiene indice invertido de la query

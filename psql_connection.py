@@ -19,7 +19,8 @@ with open('C:\Users\HP\Desktop\styles\styles.csv', 'r') as csv_file:
     # Evitar la lectura de los nombres de la primera fila.
     next(csv_reader)
     # Crear la tabla si no existe
-    cursor.execute("CREATE TABLE IF NOT EXISTS styles (id INT, gender VARCHAR(10), masterCategory VARCHAR(25), subCategory VARCHAR(25), articleType VARCHAR(25), baseColour VARCHAR(25), season VARCHAR(10), year INT NULL, usage VARCHAR(25), productDisplayName VARCHAR(255))")
+    cTableCommand = "CREATE TABLE IF NOT EXISTS styles (id INT, gender VARCHAR(10), masterCategory VARCHAR(25), subCategory VARCHAR(25), articleType VARCHAR(25), baseColour VARCHAR(25), season VARCHAR(10), year INT NULL, usage VARCHAR(25), productDisplayName VARCHAR(255))"
+    cursor.execute(cTableCommand)
 
     # Iteración en cada fila
     for row in csv_reader:
