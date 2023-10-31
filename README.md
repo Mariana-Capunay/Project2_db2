@@ -31,76 +31,76 @@
 
 ## Descripción del dominio de datos<a name="id1"></a>
 Fashion Products Dataset, es una recopilación estructurada de información sobre productos de moda. Esta información se separa en dos archivos principales **.csv**:
-<div style="text-align:center">
+<p align="center">
     <img src="images/fashion-products-dataset.jpg" alt="Fashion Products" width="200" height="200">
-</div>
+</p>
 
 - **styles.csv**: Este archivo contiene las columnas *id, gender, masterCategory, subCategory, articleType, baseColour, season, year, usage, productDisplayName*. La información de cada producto es representada en una fila:
-<div style="text-align:center">
-    <img src="images/styles_csv.png" alt="Primeras filas de styles.csv" width="400" height="190">
-</div>
+<p align="center">
+    <img src="images/styles_csv.png" alt="Primeras filas de styles.csv" width="550" height="">
+</p>
 
 - **images.csv**: Este archivo contiene las columnas *filename,link*, donde 
   - *filename* representa el id de cada imagen 
   - *link* representa la ubicación de cada imagen
-<div style="text-align:center">
-    <img src="images/images_csv.png" alt="Primeras filas de images.csv" width="400" height="150">
-</div>
+<p align="center">
+    <img src="images/images_csv.png" alt="Primeras filas de images.csv" width="550" height="">
+</p>
 
 ----------------------------------------------
 ## Librerías utilizadas<a name="id2"></a>
 ### Para el índice invertido
   - **nltk** : hacemos uso de la función *nltk.word_tokenize()* para el preprocesamiento. 
-  <div style="text-align:center">
-    <img src="images/uso_nltk_1.png" alt="Importanto módulos" width="300" height="35">
-</div>
-  <div style="text-align:center">
-    <img src="images/uso_nltk_2.png" alt="Uso de nltk.word_tokenize()" width="300" height="45">
-</div>
+  <p align="center">
+    <img src="images/uso_nltk_1.png" alt="Importanto módulos" width="500" height="">
+  </p>
+  <p align="center">
+    <img src="images/uso_nltk_2.png" alt="Uso de nltk.word_tokenize()" width="500" height="">
+  </p>
 
   También importamos el módulo *nltk.stem.snowball* para posteriormente usarlo con el método *SnowballStemmer('english')* y *stem*, lo cual nos permite reducir las palabras a su forma base o raíz (lexema)
-    <div style="text-align:center">
-    <img src="images/uso_nltk_3.png" alt="Uso de SnowballStemmer('english')" width="300" height="45">
-  </div>
-    <div style="text-align:center">
-    <img src="images/uso_nltk_4.png" alt="Uso de stemmer.stem()" width="300" height="25">
-  </div>
+    <p align="center">
+    <img src="images/uso_nltk_3.png" alt="Uso de SnowballStemmer('english')" width="500" height="">
+    </p>
+    <p align="center">
+    <img src="images/uso_nltk_4.png" alt="Uso de stemmer.stem()" width="500" height="">
+    </p>
 
 
   - **os** : hacemos uso de la función *os.path.getsize()*, la cual nos permite obtener el tamaño, en bytes, de un archivo especifico
-  <div style="text-align:center">
-    <img src="images/uso_de_os_1.png" alt="Uso de os.path.getsize()" width="300" height="32">
-  </div>
+  <p align="center">
+    <img src="images/uso_de_os_1.png" alt="Uso de os.path.getsize()" width="500" height="">
+  </p>
   
   - **io** : hacemos uso de la función *io.DEFAULT_BUFFER_SIZE*, la cual representa el tamaño predeterminado del búfer utilizado por las operaciones de entrada/salida
-  <div style="text-align:center">
-    <img src="images/uso_de_io_1.png" alt="Uso de io.DEFAULT_BUFFER_SIZE" width="300" height="45">
-  </div>
+  <p align="center">
+    <img src="images/uso_de_io_1.png" alt="Uso de io.DEFAULT_BUFFER_SIZE" width="500" height="">
+  </p>
 
   - **json** : para manejar la creación y lectura de los posting list en disco
-  <div style="text-align:center">
-    <img src="images/uso_de_json_1.png" alt="Uso de json.dump(normas,archivo)" width="300" height="50">
-  </div>
-  <div style="text-align:center">
-    <img src="images/uso_de_json_2.png" alt="Uso de json.dump(indice_local,archivo)" width="300" height="72">
-  </div>
+  <p align="center">
+    <img src="images/uso_de_json_1.png" alt="Uso de json.dump(normas,archivo)" width="500" height="">
+  </p>
+  <p align="center">
+    <img src="images/uso_de_json_2.png" alt="Uso de json.dump(indice_local,archivo)" width="500" height="">
+  </p>
 
   Adicionalmente, también hemos definido funciones que gestionan la lectura y escritura de un archivo **index+nro.json**
-  <div style="text-align:center">
-    <img src="images/uso_de_json_3.png" alt="Uso de json para read_json y read_index" width="400" height="163">
-  </div>
-  <div style="text-align:center">
-    <img src="images/uso_de_json_4.png" alt="Uso de json para write_json y write_index" width="400" height="178">
-  </div>
+  <p align="center">
+    <img src="images/uso_de_json_3.png" alt="Uso de json para read_json y read_index" width="500" height="">
+  </p>
+  <p align="center">
+    <img src="images/uso_de_json_4.png" alt="Uso de json para write_json y write_index" width="500" height="">
+  </p>
   
 
-  - **math** : Usamos los métodos _pow_ y _sqrt_ para el cálculo de la norma por fila
-    <div style="text-align:center">
-    <img src="images/uso_de_math_1.png" alt="Uso de json para read_json y read_index" width="300" height="20">
-  </div>
-  <div style="text-align:center">
-    <img src="images/uso_de_math_2.png" alt="Uso de json para write_json y write_index" width="300" height="30">
-  </div>
+  - **math** : Usamos los métodos _log10_ y _sqrt_ para el cálculo de la norma por fila
+  <p align="center">
+    <img src="images/uso_de_math_1.png" alt="Uso de math.log10()" width="500" height="">
+  </p>
+  <p align="center">
+    <img src="images/uso_de_math_2.png" alt="Uso de math.sqrt()" width="500" height="">
+  </p>
 
 ### Para el índice multimedia
 ### Para el frontend
