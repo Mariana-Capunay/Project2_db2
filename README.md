@@ -11,7 +11,7 @@
 ## Introducción
 1. [Descripción del dominio de datos](#id1)
 2. [Librerías utilizadas](#id2)
-3. [Técnica de indexación de las librerías utilizadas](#id3)
+3. [Técnica de indexación de las librerías utilizadas - Indice multimedia](#id3)
 4. [Como se realiza el KNN Search y el Range Search](#id4)
 ## Backend
 5. [Construcción del índice invertido](#id5)
@@ -29,7 +29,7 @@
 13. [Análisis y discusión](#id13)
 ----------------------------------------------
 
-## Descripción del dominio de datos<a name="id1"></a>
+## 1. Descripción del dominio de datos<a name="id1"></a>
 Fashion Products Dataset, es una recopilación estructurada de información sobre productos de moda. Esta información se separa en dos archivos principales **.csv**:
 <p align="center">
     <img src="images/fashion-products-dataset.jpg" alt="Fashion Products" width="200" height="200">
@@ -48,8 +48,8 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
 </p>
 
 ----------------------------------------------
-## Librerías utilizadas<a name="id2"></a>
-### Para el índice invertido
+## 2. Librerías utilizadas<a name="id2"></a>
+### 2.1 Para el índice invertido
   - **nltk** : hacemos uso de la función *nltk.word_tokenize()* para el preprocesamiento. 
   <p align="center">
     <img src="images/uso_nltk_1.png" alt="Importanto módulos" width="500" height="">
@@ -102,39 +102,84 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
     <img src="images/uso_de_math_2.png" alt="Uso de math.sqrt()" width="500" height="">
   </p>
 
-### Para el índice multimedia
-### Para el frontend
+### 2.2 Para el índice multimedia
+### 2.3 Para el frontend
 
 ----------------------------------------------
-## Construcción del índice invertido<a name="id5"></a>
-  ![norma](images/norrma.jpg)
-  ![poting](images/posting_list.jpg)
-  ![binary](images/binary_search.jpg)
-  ![creacion](images/crearcion_de_valor.jpg)
-  ![apimi](images/merge_spimi.jpg)
 
-# Idea
-1. Leer el .csv de acuerdo a cantidad de un buffer (considerando que tome nro exacto de filas - no haga particion)
-2. Concatenar datos de cada fila (preguntar acerca de ponderacion)
-3. Formar un hash para cada bloque
-4. Generar un posting_list -> [(docid, tf),...]  - como indice invertido
-5. Una vez se completa pasos del 1 al 4, enviar el diccionario a disco
-6. Ordena los terminos del diccionario
-7. Escribe el indice invertido (del buffer - local) en disco
-8. Repetir pasos del 1 al 7 por cada buffer
-9. Retornar nombre de archivo en el que está cada buffer
-10. Hacer Merge con todos los buckets  (mezcla en big Index)
-    
-# Json to Csv
-Por temas de facilidad y actualización de funciones considerando la longitud variable  usaremos en el manejo de la data archivos json.
+## 3. Técnica de indexación de las librerías utilizadas - Indice multimedia <a name="id3"></a>
+
+
+----------------------------------------------
+
+## 4. Como se realiza el KNN Search y el Range Search <a name="id4"></a>
+
+----------------------------------------------
+
+## 5. Construcción del índice invertido<a name="id5"></a>
+El dataset trabajado en este proyecto no puede manejarse en memoria RAM, por tal motivo hemos optado por una solución escalable que tome en cuenta las consideraciones de hardware: memoria, disco, velocidad.
+
+Por temas de facilidad (considerando la longitud variable)manejaremos los diccionarios de la data archivos *.json*.
+
+Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Indexing), el cual es utilizado para la construcción eficiente de índices invertidos.
+  <p align="center">
+    <img src="images/algorithm_spimi.jpg" alt="Algoritmo SPIMI" width="500" height="">
+  </p>
+
+  Nuestra implementación consiste en:
+  1. Leer el archivo .csv de acuerdo a cantidad de un buffer (considerando que tome nro exacto de filas, es decir, no haga particion de filas)
+  2. Preprocesar cada fila
+  3. Concatenar datos de cada fila (calculando la norma y el peso de cada palabra por fila)
+  <p align="center">
+    <img src="images/norma.jpg" alt="Cálculo de norma-Indice invertido" width="500" height="">
+  </p>
+
+  - Para calcular el valor-peso de una palabra en una fila, consideramos su frecuencia en cada campo y multiplicamos  (frecuencia de palabra en el campo*peso del campo)
+  <p align="center">
+    <img src="images/creacion_de_valor.jpg" alt="Cálculo de valor por palabra-Indice invertido" width="500" height="">
+  </p>
+
+  4. Inicializar un hash (diccionario) para cada bloque: este diccionario contendrá
+  - palabra: {pos_fila, peso de palabra para esa fila}
+  - por palabra: solo se guardará las posiciones de filas en las que la palabra tiene un peso mayor a 0
+
+  5. Completar el diccionario con todas las palabras preprocesadas del bloque
+  - Imagen de diccionario 
+
+  6. Enviar el diccionario local (del buffer) a disco
+  <p align="center">
+    <img src="images/posting_list.jpg" alt="Posting List local-Indice invertido" width="500" height="">
+  </p>
+
+  7. Repetir pasos del 1 al 6 por cada buffer
+  8. Una vez que se termine de preprocesar todos los bloques del .csv, hacer Merge entre los índices locales (mezcla en big Index)
+  <p align="center">
+    <img src="images/merge_spimi.jpg" alt="Merge local index into global index" width="500" height="">
+  </p>
+
+  9. Una vez terminado el paso 8, se tiene un solo índice global distribuido entre todos los archivos de índice (.json)
+
+### Para obtener posición de una fila
+pos_row = tamaño de bytes leídos + 1
+- pos_row de encabezado = 0
+- pos_row de primera fila = pos_row(luego de encabezado) + tamaño de encabezado + len('\n') = 0+97+1
+- pos_row de segunda fila = bytes antes de primera fila + tamaño de primera fila + len('\n') = 98 +93+1
+----------------------------------------------
+
+## 6. Manejo de memoria secundaria <a name="id6"></a>
+
+----------------------------------------------
+
+## 7. Ejecución óptima de consultas <a name="id7"></a>
+
+  <p align="center">
+    <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="500" height="">
+  </p>  
+
 
 # Query Idea
 1. Obtiene indice invertido de la query
 2. Extrae indice invertido (general)
 3. Aplica similitud coseno (no es necesario crear vectores de mismo espacio, hay que aprovechar uso de diccionarios para guardar cada termino)
 
-# Para obtener posición de una fila
-pos_row = tamaño de bytes leídos + 1
-- pos_row de encabezado = 0
-- pos_row de primera fila = pos_row(luego de encabezado) + tamaño de encabezado + len('\n') = 0+97+1
-- pos_row de segunda fila = bytes antes de primera fila + tamaño de primera fila + len('\n') = 98 +93+1
+
