@@ -136,7 +136,7 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
 
   - Para calcular el valor-peso de una palabra en una fila, consideramos su frecuencia en cada campo y multiplicamos  (frecuencia de palabra en el campo*peso del campo)
   <p align="center">
-    <img src="images/creacion_de_valor.jpg" alt="Cálculo de valor por palabra-Indice invertido" width="500" height="">
+    <img src="images/creacion_de_valor.jpg" alt="Cálculo de valor por palabra-Indice invertido" width="800" height="">
   </p>
 
   4. Inicializar un hash (diccionario) para cada bloque: este diccionario contendrá
@@ -148,13 +148,13 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
 
   6. Enviar el diccionario local (del buffer) a disco
   <p align="center">
-    <img src="images/posting_list.jpg" alt="Posting List local-Indice invertido" width="500" height="">
+    <img src="images/posting_list.jpg" alt="Posting List local-Indice invertido" width="800" height="">
   </p>
 
   7. Repetir pasos del 1 al 6 por cada buffer
   8. Una vez que se termine de preprocesar todos los bloques del .csv, hacer Merge entre los índices locales (mezcla en big Index)
   <p align="center">
-    <img src="images/merge_spimi.jpg" alt="Merge local index into global index" width="500" height="">
+    <img src="images/merge_spimi.jpg" alt="Merge local index into global index" width="800" height="">
   </p>
 
   9. Una vez terminado el paso 8, se tiene un solo índice global distribuido entre todos los archivos de índice (.json)
