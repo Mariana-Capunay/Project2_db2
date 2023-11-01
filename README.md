@@ -32,19 +32,19 @@
 ## 1. Descripción del dominio de datos<a name="id1"></a>
 Fashion Products Dataset, es una recopilación estructurada de información sobre productos de moda. Esta información se separa en dos archivos principales **.csv**:
 <p align="center">
-    <img src="images/fashion-products-dataset.jpg" alt="Fashion Products" width="200" height="200">
+    <img src="images/fashion-products-dataset.jpg" alt="Fashion Products" width="400">
 </p>
 
 - **styles.csv**: Este archivo contiene las columnas *id, gender, masterCategory, subCategory, articleType, baseColour, season, year, usage, productDisplayName*. La información de cada producto es representada en una fila:
 <p align="center">
-    <img src="images/styles_csv.png" alt="Primeras filas de styles.csv" width="550" height="">
+    <img src="images/styles_csv.png" alt="Primeras filas de styles.csv" width="700" height="">
 </p>
 
 - **images.csv**: Este archivo contiene las columnas *filename,link*, donde 
   - *filename* representa el id de cada imagen 
   - *link* representa la ubicación de cada imagen
 <p align="center">
-    <img src="images/images_csv.png" alt="Primeras filas de images.csv" width="550" height="">
+    <img src="images/images_csv.png" alt="Primeras filas de images.csv" width="700" height="">
 </p>
 
 ----------------------------------------------
