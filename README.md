@@ -155,7 +155,9 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
   - por palabra: solo se guardará las posiciones de filas en las que la palabra tiene un peso mayor a 0
 
   5. Completar el diccionario con todas las palabras preprocesadas del bloque
-  - Imagen de diccionario 
+  <p align="center">
+    <img src="images/block_dictionary.png" alt="Diccionario local" width="500" height="">
+  </p>
 
   6. Enviar el diccionario local (del buffer) a disco
   <p align="center">
@@ -184,7 +186,7 @@ pos_row = tamaño de bytes leídos + 1
 ## 7. Ejecución óptima de consultas <a name="id7"></a>
 
   <p align="center">
-    <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="500" height="">
+    <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="600" height="">
   </p>  
 
 ## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo
@@ -196,7 +198,7 @@ pos_row = tamaño de bytes leídos + 1
 ## 11. Screenshots de la GUI
   - Pantalla principal
   <p align="center">
-    <img src="images/mainpage.PNG" alt="Página principal" width="700" height="">
+    <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
   </p>
 
 # Query Idea
