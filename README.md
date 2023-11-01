@@ -92,7 +92,6 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
   <p align="center">
     <img src="images/uso_de_json_4.png" alt="Uso de json para write_json y write_index" width="500" height="">
   </p>
-  
 
   - **math** : Usamos los métodos _log10_ y _sqrt_ para el cálculo de la norma por fila
   <p align="center">
@@ -102,8 +101,20 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
     <img src="images/uso_de_math_2.png" alt="Uso de math.sqrt()" width="500" height="">
   </p>
 
+  - **csv** : para obtener rápidamente cada fila del csv al construir la tabla en PostgreSQL. 
+  <p align="center">
+    <img src="images\csv_init.PNG" alt="Lectura de archivo con csv" width="400" height="">
+  </p>
+
+  - **psycopg2** : permite establecer la conexión con la base de datos en postgreSQL, así como ejecutar comandos desde Python y obtener sus outputs.
+  <p align="center">
+    <img src="images\connection.PNG" alt="Uso de psycopg2" width="350" height="">
+  </p>
+
 ### 2.2 Para el índice multimedia
 ### 2.3 Para el frontend
+  - **flask** : 
+
 
 ----------------------------------------------
 
@@ -148,7 +159,7 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
 
   6. Enviar el diccionario local (del buffer) a disco
   <p align="center">
-    <img src="images/posting_list.jpg" alt="Posting List local-Indice invertido" width="800" height="">
+    <img src="images/posting.jpg" alt="Posting List local-Indice invertido" width="800" height="">
   </p>
 
   7. Repetir pasos del 1 al 6 por cada buffer
@@ -176,6 +187,17 @@ pos_row = tamaño de bytes leídos + 1
     <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="500" height="">
   </p>  
 
+## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo
+
+## 9. Diseño del índice con PostgreSQL/MongoDB
+
+## 10. Análisis comparativo con su propia implementación
+
+## 11. Screenshots de la GUI
+  - Pantalla principal
+  <p align="center">
+    <img src="images/mainpage.PNG" alt="Página principal" width="700" height="">
+  </p>
 
 # Query Idea
 1. Obtiene indice invertido de la query
