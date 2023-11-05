@@ -13,7 +13,7 @@ def write_index(nro_index:int, index:dict, ruta:str="")->None:
 
     if nro_index<10: #caso en el que se debe añadir un cero al inicio
         nro_index_str = "0"+nro_index_str
-    print("nro_index:",nro_index_str)
+    #print("nro_index:",nro_index_str)
     write_json(ruta+"index"+nro_index_str+".json", index) #escribimos el diccionario en un archivo json
 
 #write_index(20,{"hola":"mundo"}) #prueba
