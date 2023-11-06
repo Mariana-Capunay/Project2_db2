@@ -154,7 +154,10 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
   7. Repetir pasos del 1 al 6 por cada buffer
   8. Una vez que se termine de preprocesar todos los bloques del .csv, hacer Merge entre los índices locales (mezcla en big Index)
   <p align="center">
-    <img src="images/merge_spimi.jpg" alt="Merge local index into global index" width="800" height="">
+    <img src="images/merge_1.jpg" alt="Merge local index into global index" width="800" height="">
+  </p>
+  <p align="center">
+    <img src="images/merge_2.jpg" alt="Merge local index into global index" width="800" height="">
   </p>
 
   9. Una vez terminado el paso 8, se tiene un solo índice global distribuido entre todos los archivos de índice (.json)
