@@ -48,8 +48,6 @@ def resultados():
     return render_template("resultados.html", results=results, query=query, topk=topk)
 
 
-    
-
 @app.route('/PgAdmin')
 def pgAdmin():
     return render_template("pgAdmin.html")

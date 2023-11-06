@@ -32,19 +32,19 @@
 ## 1. Descripción del dominio de datos<a name="id1"></a>
 Fashion Products Dataset, es una recopilación estructurada de información sobre productos de moda. Esta información se separa en dos archivos principales **.csv**:
 <p align="center">
-    <img src="images/fashion-products-dataset.jpg" alt="Fashion Products" width="200" height="200">
+    <img src="images/fashion-products-dataset.jpg" alt="Fashion Products" width="400">
 </p>
 
 - **styles.csv**: Este archivo contiene las columnas *id, gender, masterCategory, subCategory, articleType, baseColour, season, year, usage, productDisplayName*. La información de cada producto es representada en una fila:
 <p align="center">
-    <img src="images/styles_csv.png" alt="Primeras filas de styles.csv" width="550" height="">
+    <img src="images/styles_csv.png" alt="Primeras filas de styles.csv" width="700" height="">
 </p>
 
 - **images.csv**: Este archivo contiene las columnas *filename,link*, donde 
   - *filename* representa el id de cada imagen 
   - *link* representa la ubicación de cada imagen
 <p align="center">
-    <img src="images/images_csv.png" alt="Primeras filas de images.csv" width="550" height="">
+    <img src="images/images_csv.png" alt="Primeras filas de images.csv" width="700" height="">
 </p>
 
 ----------------------------------------------
@@ -92,7 +92,6 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
   <p align="center">
     <img src="images/uso_de_json_4.png" alt="Uso de json para write_json y write_index" width="500" height="">
   </p>
-  
 
   - **math** : Usamos los métodos _log10_ y _sqrt_ para el cálculo de la norma por fila
   <p align="center">
@@ -102,8 +101,20 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
     <img src="images/uso_de_math_2.png" alt="Uso de math.sqrt()" width="500" height="">
   </p>
 
+  - **csv** : para obtener rápidamente cada fila del csv al construir la tabla en PostgreSQL. 
+  <p align="center">
+    <img src="images\csv_init.PNG" alt="Lectura de archivo con csv" width="400" height="">
+  </p>
+
+  - **psycopg2** : permite establecer la conexión con la base de datos en postgreSQL, así como ejecutar comandos desde Python y obtener sus outputs.
+  <p align="center">
+    <img src="images\connection.PNG" alt="Uso de psycopg2" width="350" height="">
+  </p>
+
 ### 2.2 Para el índice multimedia
 ### 2.3 Para el frontend
+  - **flask** : 
+
 
 ----------------------------------------------
 
@@ -144,7 +155,9 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
   - por palabra: solo se guardará las posiciones de filas en las que la palabra tiene un peso mayor a 0
 
   5. Completar el diccionario con todas las palabras preprocesadas del bloque
-  - Imagen de diccionario 
+  <p align="center">
+    <img src="images/block_dictionary.png" alt="Diccionario local" width="500" height="">
+  </p>
 
   6. Enviar el diccionario local (del buffer) a disco
   <p align="center">
@@ -155,9 +168,7 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
   8. Una vez que se termine de preprocesar todos los bloques del .csv, hacer Merge entre los índices locales (mezcla en big Index)
   <p align="center">
     <img src="images/merge_1.jpg" alt="Merge local index into global index" width="800" height="">
-  </p>
-  <p align="center">
-    <img src="images/merge_2.jpg" alt="Merge local index into global index" width="800" height="">
+    <img src="images/merge_2.jpg" alt="Merge local index into global index_" width="800" height="">
   </p>
 
   9. Una vez terminado el paso 8, se tiene un solo índice global distribuido entre todos los archivos de índice (.json)
@@ -176,9 +187,20 @@ pos_row = tamaño de bytes leídos + 1
 ## 7. Ejecución óptima de consultas <a name="id7"></a>
 
   <p align="center">
-    <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="500" height="">
+    <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="600" height="">
   </p>  
 
+## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo
+
+## 9. Diseño del índice con PostgreSQL/MongoDB
+
+## 10. Análisis comparativo con su propia implementación
+
+## 11. Screenshots de la GUI
+  - Pantalla principal
+  <p align="center">
+    <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
+  </p>
 
 # Query Idea
 1. Obtiene indice invertido de la query

@@ -7,6 +7,8 @@ import numpy as np
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
 
+
+
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = io.DEFAULT_BUFFER_SIZE
 path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
@@ -41,10 +43,12 @@ class InvertedIndex:
     colection_header = []
     pesos = [0,1,1,1,1,1,1,1,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
+    cont_filas_CSV = 0 #para verificar que se preprocesan todas las filas del CSV
 
     def __init__(self):
         self.setStoplist(ruta_stoplist+"\stoplist.txt") #definimos StopList
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
+        print("Nro de filas preprocesadas:",self.cont_filas_CSV)
 
     def calculo_tf(self, coleccion):# Contar la frecuencia de cada término en cada documento
         doc_tf = {} #diccionario para almacenar tf de cada palabra (en este documento)
@@ -209,10 +213,12 @@ class InvertedIndex:
     """
 
     def getBufferIndex(self,pos_inicio,archivo,nro_buffer,normas):
+
+        # se posiciona en el csv
         archivo.seek(pos_inicio)
-        ind_result = pos_inicio
+        ind_result = pos_inicio #se define como la posicion de inicio
         buffer = archivo.read(tamaño_maximo_buffer) #leemos un buffer desde el csv
-        ind_actual = 0
+        ind_actual = 0 
         indice_local = {} #para indice invertido local
 
         """
@@ -225,12 +231,15 @@ class InvertedIndex:
         i = len(buffer)-1
         while buffer[i]!='\n':
             i -= 1
+
+        # tenemos ->  buffer[i] = '\n'  
+
         #print(i)
         #print(buffer)
         #pos_fila = 0
         tamaño_linea = 0 #no estamos considerando primera posicion
         #se lee una cantidad entera de lineas
-        while ind_actual<i-1: #obtendremos cada linea 
+        while ind_actual<i: #obtendremos cada linea posible (considerando a las que se encuentran antes del ultimo '\n')
             cont_comas = 0
             campos = [] 
             
@@ -254,7 +263,7 @@ class InvertedIndex:
 
             campo = ""
 
-            while buffer[ind_actual]!='\n':    
+            while buffer[ind_actual]!='\n':   # lee ultima columa (consideramos que hay casos en los que guarda ",", por eso se separa así) 
                 campo += buffer[ind_actual]
                 ind_actual += 1
                 tamaño_linea += len(buffer[ind_actual].encode('utf-8')) #aumenta tamaño linea
@@ -267,7 +276,7 @@ class InvertedIndex:
             print('\n')
             """
             ind_actual += 1
-            ind_result += 1
+            #ind_result += 1
             tamaño_linea += len('\n'.encode('utf-8'))
 
             pos_row = pos_inicio+ind_actual-tamaño_linea #se aumenta uno por siguiente posicion
@@ -280,7 +289,7 @@ class InvertedIndex:
             self.preProcessListandIndex(list_campos=campos,dicc_lexemas=indice_local, pos_row=pos_row,dicc_normas=normas) #enviamos diccionario de normas
 
 
-        ind_result += ind_actual
+        ind_result += ind_actual #aumenta de acuerdo al indice actual
         indice_local = dict(sorted(indice_local.items())) #ordena indice local 
     
         #enviar indice a un archivo .json
@@ -299,6 +308,9 @@ class InvertedIndex:
         #los campos se encuentran separados en una lista
         #print(list_campos)
         #dicc_lexemas = {} #se imprime solo para verificar correctitud del indice invertido por linea
+
+        if pos_row!=-1:
+            self.cont_filas_CSV+=1
 
         dicc_normas[pos_row] = 0
         tf_local = {} #para contabilizar tf de cada palabra (en esta fila)
@@ -420,12 +432,6 @@ class InvertedIndex:
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
     
 
-        
-    def spimiInvert(self,token_stream):
-        output_file = "txt"
-        
-        while True:
-            token = token_stream
 
 
 
