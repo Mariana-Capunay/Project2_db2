@@ -450,13 +450,14 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
     while initB1 <= endB1 and initB2 <= endB2 and not break_While: #ambas mitades se comparan
         while not result1_full: #recorremos hasta que se llene r1
             if not token1_end and not token2_end:
-                if token1 == "w11":
-                    print("w11 en token2",token2, frecuencias2)
+                #if token1 == "w11":
+                #    print("w11 en token2",token2, frecuencias2)
                 if token1 == token2: #terminos coinciden
                     print(f"\t\tOperando con token {token1}")
                     frecuencias1.update(frecuencias2)
+                    frecuencias2 = {k: frecuencias1[k] for k in sorted(frecuencias1)}
                     print(f"\t\t{frecuencias1} {frecuencias2}")
-                    result1[token1] = frecuencias1 #añadimos merge de ambos posting list 
+                    result1[token1] = frecuencias2 #añadimos merge (ordenado) de ambos posting list 
                     # avanzamos ambos punteros
                     try:
                         token1, frecuencias1 = next(i1)
@@ -470,7 +471,8 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
                             i1 = iter(posting1.items())
                             token1, frecuencias1 = next(i1) #define nuevamente token1
                         else:
-                            token1_end = True
+                            token1_end = True # en caso se haya leido toda esta primera mitad
+                            print("Primera mitad llena")
                     
                     try:
                         token2, frecuencias2 = next(i2)
@@ -483,7 +485,7 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
                             token2, frecuencias2 = next(i2) #define nuevamente token2
                             
                         else:
-                            token2_end = True
+                            token2_end = True # en caso se haya leido toda esta segunda mitad
 
                 elif token1 < token2:
                     print(f"\t\tComparando tokens {token1} y {token2}. Ingresando token {token1}")
@@ -524,6 +526,7 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
                             token2_end = True
 
             elif token1_end: #puede avanzar con el token2
+                print("llenando con elemenos del token2")
                 try:
                     result1[token2] = frecuencias2
                     token2, frecuencias2 = next(i2)
@@ -535,9 +538,13 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
                         i2 = iter(posting2.items())
                         token2, frecuencias2 = next(i2) #define nuevamente token2
                     else:
-                        break_While = True
+                        # para ingresar -> se tuvo que haber leido segunda mitad, y ahora ya se llegó al fin de la primera
+                        #break_While = True
+                        print("Escribiendo en json",contador)
+                        write_index(contador, result1, ruta_destino) # solo escribe y retorna
+                        return None # escribe y retorna
                 
-            else: # puede avanzar con el token1
+            elif token2_end: # puede avanzar con el token1
                 try:
                     result1[token1] = frecuencias1
                     token1, frecuencias1 = next(i1)
@@ -550,10 +557,16 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
                         i1 = iter(posting1.items())
                         token1, frecuencias1 = next(i1) #define nuevamente token1
 
-
                     else:
-                        break_While = True 
+                        # para ingresar -> se tuvo que haber leido segunda mitad, y ahora ya se llegó al fin de la primera
+                        #break_While = True 
+                        
+                        write_index(contador, result1, ruta_destino) 
+                        return None # escribe y retorna
                 
+            else:
+                print("No deberia llegar aqui")
+
             result1_full = isFull(result1,len1,len2)
 
             if break_While:
@@ -564,39 +577,61 @@ def rangedMerge(initB1, endB1, initB2, endB2, ruta_origen:str, ruta_destino:str)
 
         print(f"Bloque lleno\tB1: {initB1},\tB2: {initB2}")
         
-        
-        write_index(contador, result1, ruta_destino)
-        # se setean valores (diccionario de merge vacio y result1_full = False)
-        result1= {}
-        result1_full = False
-        contador += 1
-
-    #print(f"\t\tFinalizado. Ingresando token {token2}")
-    # añadimos posibles elementos resultantes (del posting1)
-    while True:
-        try:
-            result1[token1] = frecuencias1
-            token1, frecuencias1 = next(i1)
-            print(f"\t\tInsertando token {token1}")
-        except StopIteration:
-            break
-
-    # añadimos posibles elementos resultantes (del posting2)
-    while True:
-        try:
-            result1[token2] = frecuencias2
-            token2, frecuencias2 = next(i2)
-            print(f"\t\tInsertando token {token2}")
-        except StopIteration:
-            break
-
-    #write_index(contador, result1, ruta_destino)
-    
-    print("while - linea 576")
+        if contador!=endB2: # en caso no sea ultimo bloque (de las dos mitades), solo escribe cuando se llena
+            write_index(contador, result1, ruta_destino)
+            # se setean valores (diccionario de merge vacio y result1_full = False)
+            result1= {}
+            result1_full = False
+            contador += 1
+        else: # en caso este sea el ultimo bloque que se puede escribir, pone todo ahí. Confiamos en la capacidad nivelada de los archivos
+            #print(f"\t\tFinalizado. Ingresando token {token2}")
+            # añadimos posibles elementos resultantes (del posting1)
+            result1_full = False #para que siga iterando
+            #write_index(contador, result1, ruta_destino)
+            
+        print("while - linea 607")
     # sale del bucle, cuando se llena el diccionario "result1"
         #if result1_full:
         #    print()
             #print("Se completó un bloque", result1)
+
+    
+    # añadimos posibles elementos resultantes (del posting2)
+            
+    while True:
+        try:
+            result1[token2] = frecuencias2
+            token2, frecuencias2 = next(i2)
+            #print(f"\t\tInsertando token {token2}")
+        except StopIteration:
+            initB2 += 1
+            if initB2<=endB2:
+                posting2 = read_index(initB2,ruta_origen)
+                len2 = len(json.dumps(posting2).encode('utf-8'))
+                i2 = iter(posting2.items())
+                token2, frecuencias2 = next(i2) 
+            else:
+                break
+
+    #if initB2>endB2:
+    while True:
+        try:
+            token1, frecuencias1 = next(i1)
+            result1[token1] = frecuencias1
+            #print(f"\t\tInsertando token {token1}")
+        except StopIteration:
+            initB1+=1
+            if initB1<=endB1:
+                posting1 = read_index(initB1,ruta_origen)
+                len1 = len(json.dumps(posting1).encode('utf-8'))
+                i1 = iter(posting1.items())
+                token1, frecuencias1 = next(i1) 
+                
+            else:
+                break
+
+    write_index(contador, result1, ruta_destino)
+
 
 def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str):
     # Definir parámetros iniciales
@@ -663,15 +698,15 @@ def Merge(index1:int, index2:int, ruta_origen:str, ruta_destino:str):
                 break
 
 
-ruta_origen = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
-
-ruta_destino = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
+#ruta_origen = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
+#ruta_destino = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex"
 
 
 #Merge(1, 5,"","")      # Ejecución completa
 #rangedMerge(1,1, 2, 2, "", "")
 #rangedMerge(3, 3, 4, 4, "", "")
-rangedMerge(1, 2, 3, 4, "", "")
+#rangedMerge(1, 1, 2, 2, "Initial\\", "Merge2\\")
+#rangedMerge(1,2, 3, 4, "Merge2\\", "Merge4\\")
 #Merge(33,64)
 
 # ejemplos de llamada a Merge
@@ -731,10 +766,26 @@ BasicMerge(7,8,"Initial\\","Merge2\\")
 """
 
 
-"""
-for i in range(1,17,2):
-    BasicMerge(i,i+1,"Initial\\","Merge2\\")
-"""
+nro_buckets = 37
+
+for i in range(1,nro_buckets+1,2):
+    if i+1<nro_buckets:
+        rangedMerge(i,i, i+1, i+1, "Initial\\","Merge2\\")
+    else:
+        print("Hay que copiar bloques:",i,"en memoria") 
+    #BasicMerge(i,i+1,"Initial\\","Merge2\\")
+
+#rangedMerge(1,2, 3, 4, "Merge2\\","Merge4\\")
+for i in range(1,nro_buckets+1,4):
+    if i+3<nro_buckets:
+        rangedMerge(i,i+1, i+2, i+3, "Merge2\\","Merge4\\")
+        pass
+    else:
+        print("Hay que copiar bloques:",end="")
+        for j in range (i,nro_buckets+1):
+            print(j,end=", ")
+        print("en memoria") 
+        
 
 
 """
