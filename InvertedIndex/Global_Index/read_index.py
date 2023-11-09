@@ -17,7 +17,10 @@ def read_index(nro_index:int, ruta:str="")->dict:
         nro_index_str = "0"+nro_index_str
     return read_json(ruta+"index"+nro_index_str+".json")
 
-
+#d1 = len(json.dumps(read_index(15)).encode('utf-8'))
+#print(d1)
+#d2 = len(json.dumps(read_index(16)).encode('utf-8'))
+#print(d2)
 """casos de prueba"""
 #print("Indice 1:", read_index(1))
 #print("Indice 2:", read_index(2))
