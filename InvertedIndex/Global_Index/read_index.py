@@ -1,10 +1,9 @@
 import json
 
-#ruta_indices = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index"
+ruta_indices = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index"
 
 #ruta_indices = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index"
-#ruta_indices = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
-ruta_indices = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\test_index"
+#ruta_indices = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\test_index"
 
 def read_json(nombre_archivo:str)->dict:
     with open(ruta_indices+ "\\" + nombre_archivo,'r') as archivo:
@@ -18,7 +17,10 @@ def read_index(nro_index:int, ruta:str="")->dict:
         nro_index_str = "0"+nro_index_str
     return read_json(ruta+"index"+nro_index_str+".json")
 
-
+#d1 = len(json.dumps(read_index(15)).encode('utf-8'))
+#print(d1)
+#d2 = len(json.dumps(read_index(16)).encode('utf-8'))
+#print(d2)
 """casos de prueba"""
 #print("Indice 1:", read_index(1))
 #print("Indice 2:", read_index(2))
