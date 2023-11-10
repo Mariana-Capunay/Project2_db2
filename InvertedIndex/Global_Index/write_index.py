@@ -5,8 +5,11 @@ ruta_indices = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA
 #ruta_indices = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\test_index_out"
 
 def write_json(nombre_archivo:str, index:dict)->None: #funcion para escribir un diccionario en un archivo json
-    with open(ruta_indices+ "\\" + nombre_archivo,'w') as archivo:
-        json.dump(index,archivo)
+    try:
+        with open(ruta_indices+ "\\" + nombre_archivo,'w') as archivo:
+            json.dump(index,archivo)
+    except FileNotFoundError:
+        return {}
 
 def write_index(nro_index:int, index:dict, ruta:str="")->None:
     nro_index_str:str = str(nro_index) #convierte el nro de index a string
