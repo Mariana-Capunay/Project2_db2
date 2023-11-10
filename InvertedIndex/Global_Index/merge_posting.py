@@ -15,8 +15,12 @@ def es_potencia_de_dos(numero):
 #print(read_index(1)) #solo es una prueba
 
 def isFull(index:dict, len1: int, len2:int) -> bool: #evalua si un dict se llenó (considerando longitud de los que dict's que se hacen merge)
+    while len1>50000:
+        len1-=30000
+    while len2>50000:
+        len2-=30000
     current_len: int = len(json.dumps(index).encode('utf-8'))
-    return current_len>=len1 or current_len>=len2 or current_len>=(tamaño_maximo_buffer+2800)
+    return current_len>=len1 or current_len>=len2 or current_len>=((len1+len2)/2) 
     #return len(json.dumps(index).encode('utf-8'))>=len1 or len(json.dumps(index).encode('utf-8'))>=len2
 
 
@@ -768,63 +772,101 @@ BasicMerge(7,8,"Initial\\","Merge2\\")
 """
 
 
-nro_buckets = 37
 
+
+def final_merge(nro_buckets:int) -> None:
+    
+    for i in range(1,nro_buckets+1,2):
+        if i+1<=nro_buckets:
+            rangedMerge(i,i, i+1, i+1, "Initial\\","Merge2\\")
+        else:
+            print("Hay que copiar bloques:",i,"en memoria") 
+        #BasicMerge(i,i+1,"Initial\\","Merge2\\")
+
+
+
+    #rangedMerge(1,2, 3, 4, "Merge2\\","Merge4\\")
+    for i in range(1,nro_buckets+1,4):
+        if i+3<=nro_buckets:
+            rangedMerge(i,i+1, i+2, i+3, "Merge2\\","Merge4\\")
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+
+
+
+    for i in range(1,nro_buckets+1,8):
+        if i+7<=nro_buckets:
+            rangedMerge(i,i+3, i+4, i+7, "Merge4\\","Merge8\\") # toma B1: (1,4)  ^ B2: (5,8)
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+
+
+    for i in range(1,nro_buckets+1,16):
+        if i+15<=nro_buckets:
+            rangedMerge(i,i+7, i+8, i+15, "Merge8\\","Merge16\\") # toma B1: (1,8)  ^ B2: (9,16)
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+            break
+
+    for i in range(1,nro_buckets+1,32):
+        if i+31<=nro_buckets:
+            rangedMerge(i,i+15, i+16, i+31, "Merge16\\","Merge32\\") # toma B1: (1,16)  ^ B2: (17,32)
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+            break
+
+    for i in range(1,nro_buckets+1,64):
+        if i+63<=nro_buckets:
+            rangedMerge(i,i+31, i+32, i+63, "Merge32\\","Merge64\\") # toma B1: (1,32)  ^ B2: (17,32)
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+            break
+
+    for i in range(1,nro_buckets+1,128):
+        if i+127<=nro_buckets:
+            rangedMerge(i,i+63, i+64, i+127, "Merge64\\","Merge128\\") # toma B1: (1,64)  ^ B2: (65,128)
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+            break
 """
-for i in range(1,nro_buckets+1,2):
-    if i+1<nro_buckets:
-        rangedMerge(i,i, i+1, i+1, "Initial\\","Merge2\\")
-    else:
-        print("Hay que copiar bloques:",i,"en memoria") 
-    #BasicMerge(i,i+1,"Initial\\","Merge2\\")
+    for i in range(1,nro_buckets+1,256):
+        if i+255<=nro_buckets:
+            rangedMerge(i,i+127, i+128, i+255, "Merge128\\","Merge256\\") # toma B1: (1,128)  ^ B2: (129,256)
+            pass
+        else:
+            print("Hay que copiar bloques:",end="")
+            for j in range (i,nro_buckets+1):
+                print(j,end=", ")
+            print("en memoria") 
+            break
+        """
 
-
-
-#rangedMerge(1,2, 3, 4, "Merge2\\","Merge4\\")
-for i in range(1,nro_buckets+1,4):
-    if i+3<nro_buckets:
-        rangedMerge(i,i+1, i+2, i+3, "Merge2\\","Merge4\\")
-        pass
-    else:
-        print("Hay que copiar bloques:",end="")
-        for j in range (i,nro_buckets+1):
-            print(j,end=", ")
-        print("en memoria") 
-
-
-
-for i in range(1,nro_buckets+1,8):
-    if i+7<nro_buckets:
-        rangedMerge(i,i+3, i+4, i+7, "Merge4\\","Merge8\\") # toma B1: (1,4)  ^ B2: (5,8)
-        pass
-    else:
-        print("Hay que copiar bloques:",end="")
-        for j in range (i,nro_buckets+1):
-            print(j,end=", ")
-        print("en memoria") 
-
-"""
-for i in range(1,nro_buckets+1,16):
-    if i+15<nro_buckets:
-        rangedMerge(i,i+7, i+8, i+15, "Merge8\\","Merge16\\") # toma B1: (1,8)  ^ B2: (9,16)
-        pass
-    else:
-        print("Hay que copiar bloques:",end="")
-        for j in range (i,nro_buckets+1):
-            print(j,end=", ")
-        print("en memoria") 
-        break
-
-for i in range(1,nro_buckets+1,32):
-    if i+31<nro_buckets:
-        rangedMerge(i,i+15, i+16, i+31, "Merge16\\","Merge32\\") # toma B1: (1,16)  ^ B2: (17,32)
-        pass
-    else:
-        print("Hay que copiar bloques:",end="")
-        for j in range (i,nro_buckets+1):
-            print(j,end=", ")
-        print("en memoria") 
-        break
+nro_buckets = 128
+final_merge(nro_buckets=nro_buckets)
 
 """
 for i in range(1,17,4):
