@@ -174,10 +174,13 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
   9. Una vez terminado el paso 8, se tiene un solo índice global distribuido entre todos los archivos de índice (.json)
 
 ### Para obtener posición de una fila
-pos_row = tamaño de bytes leídos + 1
+<p align="center">
+pos_row_actual = tamaño de bytes leídos
+</p>
+
 - pos_row de encabezado = 0
-- pos_row de primera fila = pos_row(luego de encabezado) + tamaño de encabezado + len('\n') = 0+97+1
-- pos_row de segunda fila = bytes antes de primera fila + tamaño de primera fila + len('\n') = 98 +93+1
+- pos_row de primera fila = pos_row(luego de encabezado) + tamaño de encabezado = 0+97 = 97
+- pos_row de segunda fila = bytes antes de primera fila + tamaño de primera fila = 98 +92 = 190
 ----------------------------------------------
 
 ## 6. Manejo de memoria secundaria <a name="id6"></a>

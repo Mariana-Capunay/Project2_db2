@@ -21,6 +21,7 @@ ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGI
 #ruta_stoplist = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2"
 
 
+
 """
     Pasos:
         1. Preprocesar los documentos
@@ -434,5 +435,34 @@ class InvertedIndex:
 
 
 
+def processQuery(query):
+    tokens = nltk.word_tokenize(query.lower())
+
+    # sacar el lexema
+    stemmer = SnowballStemmer('english')
+
+    stopList = []
+
+    stop_words = open(ruta_stoplist, "r", encoding="latin1") 
+
+    for i in stop_words:
+        stopList.append(i.strip('\n')) #se agrega cada elemento quitando saltos de linea
+
+    stop_words.close() #cierra archivo leido
+
+    stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
+    for caracter in stoplist_extended:
+        stopList.append(caracter)
+
+    
+    result = {}
+    for token in tokens:
+        if token not in stopList:
+            lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
+            if token not in result:
+                result[lexema] = 1
+            else:
+                result[lexema] += 1
+    return result
 
     
