@@ -188,10 +188,16 @@ pos_row_actual = tamaño de bytes leídos
 ----------------------------------------------
 
 ## 7. Ejecución óptima de consultas <a name="id7"></a>
+Al recibir una query, lo que se hace es:
+1. Obtener el índice invertido de la query
+2. Aplicar similitud coseno (no es necesario crear vectores de mismo espacio, se aprovecha uso de diccionarios)
 
+Adicional a ello, cabe recalcar que ya tenemos el índice invertido global de nuestro dataset en disco. Y que estamos haciendo uso de la búsqueda binaria para encontrar un término y sus ocurrencias:
   <p align="center">
     <img src="images/binary_search.jpg" alt="Búsqueda binaria" width="600" height="">
   </p>  
+
+Todo esto facilita el tiempo de las consultas (considerando que el índice invertido global del dataset solo se genera al inicio de nuestro programa y luego no se modifica).
 
 ## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo
 
@@ -205,9 +211,6 @@ pos_row_actual = tamaño de bytes leídos
     <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
   </p>
 
-# Query Idea
-1. Obtiene indice invertido de la query
-2. Extrae indice invertido (general)
-3. Aplica similitud coseno (no es necesario crear vectores de mismo espacio, hay que aprovechar uso de diccionarios para guardar cada termino)
+
 
 
