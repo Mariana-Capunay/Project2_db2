@@ -185,6 +185,18 @@ pos_row_actual = tamaño de bytes leídos
 
 ## 6. Manejo de memoria secundaria <a name="id6"></a>
 
+Utilizamos el archivo normas.json para almacenar el índice invertido generado. El diccionario almacena la información como [pos_row]:norma.
+
+Luego, para comenzar a crear el índice global, almacenamos cada diccionario local en Local_Index. Al inicio, observamos que el número de diccionarios creados era excesivo (alrededor de 530). Además, encontramos que este número de archivos json perjudicaba la eficiencia de la creación del índice global.
+
+Para ello, incrementamos el tamaño máximo de cada diccionario multiplicando el valor de DEFAULT_BUFFER_SIZE de la librería io. Con ello, el número de diccionarios se redujo a 128.
+
+<p align="center">
+    <img src="images\new_buffer.PNG" alt="Modificadion del buffer" width="600" height="">
+  </p>  
+
+Tras este cambio, procedimos a ejecutar el índice global con el algoritmo SPIMI. Para evitar mezclar o perder información en cada iteración, creamos una carpeta por cada iteración hasta el final del algoritmo. Finalmente, para liberar memoria, eliminamos los diccionarios de las carpetas procesadas por el merge excepto por la última, que contiene el índice global completo.
+
 ----------------------------------------------
 
 ## 7. Ejecución óptima de consultas <a name="id7"></a>
