@@ -48,7 +48,7 @@ def init():
         connection.commit()
     cursor.execute("ALTER TABLE styles ADD COLUMN weighted_tsv tsvector")
     cursor.execute("ALTER TABLE styles ADD COLUMN weighted_tsv2 tsvector")
-    cursor.execute("UPDATE styles SET weighted_tsv = x.weighted_tsv, weighted_tsv2 = x.weighted_tsv FROM (SELECT id, setweight(to_tsvector('english', COALESCE(masterCategory,'')), 'A') || setweight(to_tsvector('english', COALESCE(articleType,'')), 'A') || setweight(to_tsvector('english', COALESCE(baseColour,'')), 'A') || setweight(to_tsvector('english', COALESCE(season,'')), 'A') || setweight(to_tsvector('english', COALESCE(usage,'')), 'A') || setweight(to_tsvector('english', COALESCE(productdisplayname,'')), 'A') AS weighted_tsv FROM styles) AS x WHERE x.id = styles.id;")
+    cursor.execute("UPDATE styles SET weighted_tsv = x.weighted_tsv, weighted_tsv2 = x.weighted_tsv FROM (SELECT id, setweight(to_tsvector('english', COALESCE(masterCategory,'')), 'A') || setweight(to_tsvector('english', COALESCE(articleType,'')), 'A') || setweight(to_tsvector('english', COALESCE(baseColour,'')), 'A') || setweight(to_tsvector('english', COALESCE(season,'')), 'A') || setweight(to_tsvector('english', COALESCE(usage,'')), 'A') || setweight(to_tsvector('english', COALESCE(productdisplayname,'')), 'B') AS weighted_tsv FROM styles) AS x WHERE x.id = styles.id;")
     cursor.execute("CREATE INDEX weighted_tsv_idx ON styles USING GIN (weighted_tsv2)")
     connection.commit()
     cursor.close()
