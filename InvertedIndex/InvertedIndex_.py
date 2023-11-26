@@ -11,16 +11,14 @@ nltk.download('punkt')
 
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = int(io.DEFAULT_BUFFER_SIZE*4.15)
-#path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
-path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex\Local_Index\Initial"
+path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
 #path_local_index = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index"
 
 ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
 #ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
 
-#ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
+ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
 #ruta_stoplist = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2"
-ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2"
 
 
 
@@ -72,7 +70,7 @@ class InvertedIndex:
         total_tf = sorted(total_tf.items(), key=lambda x: x[1], reverse=True) #ordenamos por tf
         return doc_tf, total_tf
 
-    def calculo_idf(self, term, idf_freq, term_freq, N): #calculo de idf para cada termino
+    def calculo_idf(self, term, idf_freq, term_freq, N):
         if term in idf_freq: #si ya existe para term
             idf = idf_freq[term]
         else:
@@ -87,7 +85,7 @@ class InvertedIndex:
             idf_freq[term] = idf
         return idf
 
-    def compute_tfidf(self,data, collection): # Es para obtener los resultados TF-IDF
+    def compute_tfidf(self,data, collection):
         tfidf = {}  # Diccionario para almacenar los resultados TF-IDF
         idf_freq = {}  # Diccionario para almacenar la frecuencia inversa de documentos (IDF)
         index = {}  # Diccionario para almacenar el índice de términos
@@ -124,51 +122,6 @@ class InvertedIndex:
 
         return length, idf_freq, index
 
-    def retrieval(self, doc_index,doc_idfs,query,k): # calcula el coseno entre el vector de la query y el vector de cada documento. Tiene como entrada a self, el indice invertido, los idf de los documentos, la query y el numero de documentos a retornar
-        #diccionario para almacenar los resultados
-        results = {}
-        #prepocesamos la query
-        query = processQuery(query)
-
-        r=[]
-
-        #contabilizamos la cantidad de palabras de la query en un dicc
-        query_freq = {}
-        for term in query:
-            if term in query_freq:
-                query_freq[term] += 1
-            else:
-                query_freq[term] = 1
-        
-        #calculamos el tf-idf de la query
-        for term in doc_index:
-            if term in query_freq:
-                tf = np.log10(query_freq[term] + 1)
-                idf = self.calculo_idf(term, doc_idfs, doc_index, len(doc_index))
-                r.append(round(tf * idf, 3))
-            else:
-                r.append(0)
-
-        #calculamos la norma de la query
-        array = np.array(list(r))
-        query_norm = np.linalg.norm(array)
-
-        #calculamos el coseno entre la query y cada documento
-        for doc in doc_index:
-            #calculamos el coseno
-            dot_product = np.dot(r, doc_index[doc])
-            doc_norm = doc_idfs[doc]
-            cos = dot_product / (query_norm * doc_norm)
-            results[doc] = cos
-
-        #ordenamos los resultados
-        results = sorted(results.items(), key=lambda x: x[1], reverse=True)
-
-        #retornamos los k primeros
-        return results[:k]
-    
-
-
 
 
     def setStoplist(self,nombre):
@@ -182,7 +135,7 @@ class InvertedIndex:
         stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
         for caracter in stoplist_extended:
             self.stopList.append(caracter)
-        print(self.stopList)
+        #print(self.stopList)
     
     def preProcessCSV(self,ruta_archivo):
         tamano_bytes = os.path.getsize(ruta_archivo) # total de bytes en el csv
@@ -260,7 +213,7 @@ class InvertedIndex:
             print(cont)
     """
 
-    def getBufferIndex(self,pos_inicio,archivo,nro_buffer,normas): #funcion ´para obtener indice invertido de un buffer
+    def getBufferIndex(self,pos_inicio,archivo,nro_buffer,normas):
 
         # se posiciona en el csv
         archivo.seek(pos_inicio)
@@ -368,11 +321,6 @@ class InvertedIndex:
             #obtendremos la norma por cada campo (mientras preprocesamos)
             #tf_campo = self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row,tf_local=tf_local) 
             #tf_total += tf_campo # almacenamos la suma de tf's (de todos los campos)
-            
-            #calculamos los pesos con el coseno
-            self.retrieval(doc_index=dicc_lexemas,doc_idfs=dicc_normas,query=campo,k=1) #calculamos el coseno entre el vector de la query y el vector de cada documento. Tiene como entrada a self, el indice invertido, los idf de los documentos, la query y el numero de documentos a retornar
-            
-            #imprimimos los pesos
 
             self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row,tf_local=tf_local) 
             #print("Lexemas+tf: ",dicc_lexemas) #verificacion del indice invertido por linea
@@ -484,6 +432,8 @@ class InvertedIndex:
         #print(dicc_lexemas)
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
     
+
+
 
 def processQuery(query):
     tokens = nltk.word_tokenize(query.lower())

@@ -2,6 +2,7 @@ import json
 
 from InvertedIndex import path_local_index
 
+
 def find_word(word:str,limit = 10000):
     # Retorna el diccionario de la palabra si es que existe, si no, retorna un diccionario vacio
     ini = 0
