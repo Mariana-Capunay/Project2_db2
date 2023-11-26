@@ -100,14 +100,17 @@ def get_feature(n: int, feature: int = -1):
 
 def get_data_images(elements: list[int]):
     file = open(images_csv, "r")
-    data = []
+    d = {}
+    for i in range(len(elements)):
+        d[elements[i]] = i
+    data = [[]]*len(elements)
     for i in range(max(elements)+2):
         cur = file.readline()
         if i-1 in elements:
             cur = cur[:-1]
             cur = cur.split(',')
             cur.append(get_feature(i-1, N_FEATURES)[:-1])
-            data.append(cur)
+            data[d[i-1]] = cur 
     return data
 
 
