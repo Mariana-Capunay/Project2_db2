@@ -2,7 +2,7 @@
 ## Organización del equipo
 | Participante | Papel |
 |--------------|--------------|
-| Mariana Capuñay   | Procesamiento del CSV-Creación de índice invertido, Manejo de índices, Implementación de SPIMI, Merge |
+| Mariana Capuñay   | Procesamiento del CSV-Creación de índice invertido, Manejo de índices, Implementación de SPIMI, Merge, cosine |
 | Manyory Cueva    | Frontend, Ponderación de pesos en postgresql, cosine  | 
 | Jaime Ramos    |  Creación del índice invertido, Análisis de normas por fila, Conexión con postgresql, Análisis de SPIMI, Merge | 
 | Gustavo Orosco  | Binary search para buscar palabras, Generación de vectores caracteristicos e indices para registros de longitud variable, KNN secuencial | 

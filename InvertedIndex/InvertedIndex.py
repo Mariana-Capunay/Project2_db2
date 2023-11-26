@@ -52,7 +52,7 @@ ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGI
 
 class InvertedIndex:
     colection_header = []
-    pesos = [0,0,1,0,1,1,1,0,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
+    pesos = [0,0,1.5,0,1.5,1.5,1.5,0,1.5,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
     cont_filas_CSV = 0 #para verificar que se preprocesan todas las filas del CSV
     nro_buckets = 0
