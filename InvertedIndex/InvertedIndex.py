@@ -80,7 +80,7 @@ class InvertedIndex:
         stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
         for caracter in stoplist_extended:
             self.stopList.append(caracter)
-        print(self.stopList)
+        #print(self.stopList)
     
     def preProcessCSV(self,ruta_archivo):
 
@@ -100,7 +100,7 @@ class InvertedIndex:
             #pos_row += 1 #para contar donde inicia fila que sigue
         #divide los encabezados por coma
             self.colection_header = encabezado_text.strip().split(',')
-            print('Encabezados del CSV:', self.colection_header)
+            #print('Encabezados del CSV:', self.colection_header)
             
             #print(pos_row)
 
