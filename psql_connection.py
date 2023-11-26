@@ -5,7 +5,7 @@ import csv
 db_config = {
     'dbname': 'test_connection',
     'user': 'postgres',
-    'password': 'coconut',
+    'password': '76591212',
     'host': 'localhost',
     'port': 5432
 }
@@ -14,7 +14,7 @@ connection = psycopg2.connect(**db_config)
 cursor = connection.cursor()
 
 # Abre el archivo CSV
-with open('C:\Users\HP\Desktop\styles\styles.csv', 'r') as csv_file:
+with open('C:\Users\ASUS\Downloads\prueba\styles.csv', 'r') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     # Evitar la lectura de los nombres de la primera fila.
     next(csv_reader)

@@ -28,3 +28,4 @@ remove_jsons(directorio+"\\Merge16\\")
 remove_jsons(directorio+"\\Merge32\\")
 remove_jsons(directorio+"\\Merge64\\")
 #remove_jsons(directorio+"\\Merge128\\") #en esta carpeta, está el indice global
+

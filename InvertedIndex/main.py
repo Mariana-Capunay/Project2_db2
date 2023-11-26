@@ -20,7 +20,3 @@ print("processQuery:",InvertedIndexQuery)
 
 #2. Calculamos el coseno entre query y los docs
 indice.cosine(InvertedIndexQuery)
-
-
-
-
