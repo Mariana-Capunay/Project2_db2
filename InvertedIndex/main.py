@@ -20,4 +20,8 @@ print("processQuery:",InvertedIndexQuery)
 
 #2. Calculamos el coseno entre query y los docs
 result = indice.cosine(InvertedIndexQuery,5)
-print(result)
+
+print("Filas que coinciden: ",end="")
+for pos_row in result:
+    print(pos_row)
+#print(result)

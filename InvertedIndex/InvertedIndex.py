@@ -52,7 +52,7 @@ ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGI
 
 class InvertedIndex:
     colection_header = []
-    pesos = [0,0,1,0,1,1,1,0,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
+    pesos = [0,0,1.5,0,1.5,1.5,1.5,0,1.5,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
     cont_filas_CSV = 0 #para verificar que se preprocesan todas las filas del CSV
     nro_buckets = 0
@@ -427,7 +427,7 @@ class InvertedIndex:
 
             # we need to obtain the doc product between each term of query and row
             valuesTerm = find_word(term,self.nro_buckets)
-            print(term,"aparece en",len(valuesTerm),"rows")
+            #print(term,"aparece en",len(valuesTerm),"rows")
 
             for value in valuesTerm: #here, we itere in each pos_row
                 if value not in cosine: #this means that not other term was in this row, this is the first match
@@ -454,7 +454,7 @@ class InvertedIndex:
         # now, we have to find the topK similarities
         if topK!=0:
             cosine = {k: v for k, v in sorted(cosine.items(), key=lambda item: item[1], reverse=True)}
-            return dict(list(cosine.items())[:topK])
+            return dict(list(cosine.items())[:topK+1])
         print(cosine)
         return cosine
 
