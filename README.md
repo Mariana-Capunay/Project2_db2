@@ -175,7 +175,9 @@ Nuestra implementación se basa en el algoritmo SPIMI (Single Pass In-Memory Ind
 
 ### Para obtener posición de una fila
 <p align="center">
-pos_row_actual = tamaño de bytes leídos
+
+$$ pos \space row \space actual = tamaño \space de \space bytes \space leídos $$
+
 </p>
 
 - pos_row de encabezado = 0
@@ -189,7 +191,7 @@ Utilizamos el archivo normas.json para almacenar el índice invertido generado. 
 
 Luego, para comenzar a crear el índice global, almacenamos cada diccionario local en Local_Index. Al inicio, observamos que el número de diccionarios creados era excesivo (alrededor de 530). Además, encontramos que este número de archivos json perjudicaba la eficiencia de la creación del índice global.
 
-Para ello, incrementamos el tamaño máximo de cada diccionario multiplicando el valor de DEFAULT_BUFFER_SIZE de la librería io. Con ello, el número de diccionarios se redujo a 128.
+Para ello, incrementamos el tamaño máximo de cada diccionario multiplicando el valor de DEFAULT_BUFFER_SIZE de la librería io por una cantidad que no perjudique la lectura de datos. Con ello, el número de diccionarios se redujo a 128.
 
 <p align="center">
     <img src="images\new_buffer.PNG" alt="Modificadion del buffer" width="600" height="">

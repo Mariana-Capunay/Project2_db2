@@ -4,6 +4,7 @@ import io
 import json
 import math
 import numpy as np
+from binary_search import find_word
 from nltk.stem.snowball import SnowballStemmer
 nltk.download('punkt')
 
@@ -11,13 +12,18 @@ nltk.download('punkt')
 
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = int(io.DEFAULT_BUFFER_SIZE*4.15)
-path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex\Local_Index\Initial"
+path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
+#path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex\Local_Index\Initial"
 #path_local_index = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index"
+
+final_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Merge128"
 
 ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
 #ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
 
-ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2"
+
+ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex"
+#ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2"
 #ruta_stoplist = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2"
 
 
@@ -45,9 +51,12 @@ class InvertedIndex:
     pesos = [0,0,1,0,1,1,1,0,1,1] # para guardar pesos de cada campo (crear una funcion que haga esto)
     stopList = []
     cont_filas_CSV = 0 #para verificar que se preprocesan todas las filas del CSV
+    nro_buckets = 0
 
     def __init__(self):
         self.setStoplist(ruta_stoplist+"\stoplist.txt") #definimos StopList
+
+    def do_Spimi(self):
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
         print("Nro de filas preprocesadas:",self.cont_filas_CSV)
 
@@ -300,6 +309,7 @@ class InvertedIndex:
         #print("indice: ",indice_local)
         with open(ruta_indice_local, "w") as archivo:
             json.dump(indice_local, archivo)
+
         return ind_result
 
         
@@ -433,36 +443,46 @@ class InvertedIndex:
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
     
 
+    def processQuery(self,query):
+        tokens = nltk.word_tokenize(query.lower())
 
+        # sacar el lexema
+        stemmer = SnowballStemmer('english')
 
-def processQuery(query):
-    tokens = nltk.word_tokenize(query.lower())
+        
+        result = {}
 
-    # sacar el lexema
-    stemmer = SnowballStemmer('english')
+        for i in range (len(tokens)): #recorre tokens
+            if tokens[i] not in self.stopList: #si no es stopWord
+                lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
 
-    stopList = []
-
-    stop_words = open(ruta_stoplist, "r", encoding="latin1") 
-
-    for i in stop_words:
-        stopList.append(i.strip('\n')) #se agrega cada elemento quitando saltos de linea
-
-    stop_words.close() #cierra archivo leido
-
-    stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
-    for caracter in stoplist_extended:
-        stopList.append(caracter)
-
+                if lexema not in result:
+                    result[lexema] = 1
+                else:
+                    result[lexema] += 1
+        return result
     
-    result = {}
-    for token in tokens:
-        if token not in stopList:
-            lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
-            if token not in result:
-                result[lexema] = 1
-            else:
-                result[lexema] += 1
-    return result
+    def contar_archivos_json(self):
+        # Obtener la lista de archivos en la carpeta
+        archivos_en_carpeta = os.listdir(final_index)
+
+        # Filtrar archivos con extensión .json
+        archivos_json = [archivo for archivo in archivos_en_carpeta if archivo.endswith('.json')]
+
+        # Contar el número de archivos JSON
+        numero_archivos_json = len(archivos_json)
+
+        return numero_archivos_json
+    
+    def cosine(self,termsQuery):
+        docs = {}
+
+        if self.nro_buckets == 0:
+            self.nro_buckets = self.contar_archivos_json()
+        print(self.nro_buckets)
+            
+        for term in termsQuery:
+            docs = find_word(term,self.nro_buckets)
+            print(term,"aparece en",len(docs),"rows")
 
     

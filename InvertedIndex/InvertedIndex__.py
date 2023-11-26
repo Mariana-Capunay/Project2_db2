@@ -403,7 +403,7 @@ class InvertedIndex:
     def calculate_cosine_similarity(self, query_vector, document_vectors):
         similarities = []
         for doc_vector in document_vectors:
-            similarity = cosine_similarity([query_vector], [doc_vector])
+            similarity = self.cosine_similarity([query_vector], [doc_vector])
             similarities.append(similarity[0][0])
         return similarities
     

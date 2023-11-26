@@ -1,6 +1,6 @@
 import json 
 
-from InvertedIndex import path_local_index
+path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Merge128"
 
 
 def find_word(word:str,limit = 10000):
@@ -8,7 +8,7 @@ def find_word(word:str,limit = 10000):
     ini = 0
     fin = limit
     while 1:
-        mid = (ini + fin)/2
+        mid = int((ini + fin)/2)
         ruta_indice_local = path_local_index+"\index"+str(mid+1).zfill(2)+".json"
         try:
             file = open(ruta_indice_local,"r")
