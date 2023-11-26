@@ -4,6 +4,7 @@ import pywt
 import pywt.data
 import pandas as pd
 import struct
+import numpy as np
 
 output_file = "vector_images.bin"
 position_data_file = "position_data.bin"
@@ -13,8 +14,8 @@ features_csv = "styles.csv"
 
 INTEGER_BYTES = 4
 FLOAT_BYTES = 4
-EXPECTED_LENGTH_DATA = 4000
 N_FEATURES = 9
+EXPECTED_LENGTH_DATA = 4000
 
 
 def get_feature_vector(picture, cortes=3):
@@ -30,13 +31,13 @@ def load_images(n: int):
         position_data = open(position_data_file, "wb")
         links_image = pd.read_csv(images_csv)
         # Itera a través de las imágenes y obtiene las características
-        
+
         i = 0
         for image_name, image_link in zip(links_image["filename"], links_image["link"]):
             if i == n:
                 break
-            position_seek = file.tell()
-           
+
+            position_seek = file.tell()          
             position_data.write(struct.pack('i', position_seek))
             img = imread(image_link)
             img_res = transform.resize(img, (250, 250, 3))
@@ -94,6 +95,22 @@ def get_feature(n: int, feature: int = -1):
         assert feature >= 0 and feature < N_FEATURES, "INVALID FEATURE"
         if feature == 0:
             print("FEATURE IS ID")
-        return data_feature[feature]
-# load_features(10)
-# print(get_feature(2,2))
+        return data_feature[feature] 
+
+
+def get_data_images(elements: list[int]):
+    file = open(images_csv, "r")
+    data = []
+    for i in range(max(elements)+2):
+        cur = file.readline()
+        if i-1 in elements:
+            cur = cur[:-1]
+            data.append(cur.split(','))
+    return data
+
+
+def get_distance(x: int, y: int):
+    vector_x = np.array(get_vector(x))
+    vector_y = np.array(get_vector(y))
+    return np.array(np.sum(abs(vector_x-vector_y) ** 2)) ** 1/2
+
