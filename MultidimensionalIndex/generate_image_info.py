@@ -92,7 +92,7 @@ def get_feature(n: int, feature: int = -1):
     if feature == -1:
         return data_feature[:N_FEATURES]
     else:
-        assert feature >= 0 and feature < N_FEATURES, "INVALID FEATURE"
+        assert feature >= 0 and feature <= N_FEATURES, "INVALID FEATURE"
         if feature == 0:
             print("FEATURE IS ID")
         return data_feature[feature] 
@@ -105,7 +105,9 @@ def get_data_images(elements: list[int]):
         cur = file.readline()
         if i-1 in elements:
             cur = cur[:-1]
-            data.append(cur.split(','))
+            cur = cur.split(',')
+            cur.append(get_feature(i-1, N_FEATURES)[:-1])
+            data.append(cur)
     return data
 
 
