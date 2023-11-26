@@ -5,7 +5,7 @@ import csv
 db_config = {
     'dbname': 'test_connection',
     'user': 'postgres',
-    'password': '76591212',
+    'password': 'coconut',
     'host': 'localhost',
     'port': 5432
 }
@@ -15,7 +15,7 @@ cursor = connection.cursor()
 
 def init():
 # Abre el archivo CSV
-    with open('C:\Users\ASUS\Downloads\prueba\styles.csv', 'r') as csv_file:
+    with open('C:/Users/HP/Desktop/styles/styles.csv', 'r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         # Evitar la lectura de los nombres de la primera fila.
         next(csv_reader)
@@ -65,20 +65,26 @@ def init():
     cursor.execute("CREATE INDEX weighted_tsv_idx ON styles USING GIN (weighted_tsv2)")
 
 def topKpsql(query, k):
+    words = query.split(" ")
     terms = ""
-    for item in query:
-        terms += item + " | "
+    for word in words:
+        terms += word + " | "
     terms = terms[:-2]
+    
+    print("Terminos leidos: ", terms)
 
     cursor.execute("set enable_seqscan = false")
-    consulta = ('''
-        SELECT id, gender, mastercategory, subcategory, articletype, basecolour, season, year, usage, productdisplayname
-        FROM styles, to_tsquery('english', '%s') query
-        WHERE query @@ weighted_tsv2
-        ORDER BY ts_rank_cd(weighted_tsv2, query) desc
-        LIMIT %s;
-                   '''), (terms, k)
+    consulta = f"SELECT id, gender, mastercategory, subcategory, articletype, basecolour, season, year, usage, productdisplayname FROM styles, to_tsquery('english', '{terms}') query WHERE query @@ weighted_tsv2 ORDER BY ts_rank_cd(weighted_tsv2, query) desc LIMIT {k};"
     cursor.execute(consulta)
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+
+
+
+query = "yellow casual pants are yellow"
+
+topKpsql(query, 5)
 
 # Termina la conexión con la base de datos
 cursor.close()
