@@ -11,14 +11,16 @@ nltk.download('punkt')
 
 # Obtiene el tamaño predeterminado del buffer de entrada/salida en bytes
 tamaño_maximo_buffer = int(io.DEFAULT_BUFFER_SIZE*4.15)
-path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
+#path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2\InvertedIndex\Local_Index\Initial"
+path_local_index = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex\Local_Index\Initial"
 #path_local_index = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2\InvertedIndex\Local_Index"
 
 ruta_archivo = r"C:\Users\ASUS\Downloads\prueba\styles.csv" # Ruta del archivo CSV
 #ruta_archivo = r"C:\Users\HP\Desktop\styles\styles.csv"
 
-ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
+#ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Escritorio\bd2_proyecto_2023.2\proyecto_2\Project2_db2"
 #ruta_stoplist = r"C:\Users\HP\Desktop\UTEC\Ciclo_VI\Base_de_datos_II\Proyecto_2\Project2_db2"
+ruta_stoplist = r"C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2"
 
 
 
@@ -51,76 +53,8 @@ class InvertedIndex:
         self.preProcessCSV(ruta_archivo) #preprocesamos cada buffer del CSV
         print("Nro de filas preprocesadas:",self.cont_filas_CSV)
 
-    def calculo_tf(self, coleccion):# Contar la frecuencia de cada término en cada documento
-        doc_tf = {} #diccionario para almacenar tf de cada palabra (en este documento)
-        total_tf = {} #para calcular la norma}
-        for id_doc,doc in enumerate(coleccion):
-            #cuantas veces aparece cada palabra en el documento
-            doc_term_freq = {}
-            for term in doc:
-                if term in doc_term_freq:
-                    doc_term_freq[term] += 1
-                    total_tf[term] += 1
-                else:
-                    if term not in total_tf:
-                        total_tf[term] = 1
-                    doc_term_freq[term] = 1
-            doc_tf[id_doc] = doc_term_freq
 
-        total_tf = sorted(total_tf.items(), key=lambda x: x[1], reverse=True) #ordenamos por tf
-        return doc_tf, total_tf
-
-    def calculo_idf(self, term, idf_freq, term_freq, N):
-        if term in idf_freq: #si ya existe para term
-            idf = idf_freq[term]
-        else:
-            df = 0 #en cuantos docs aparece term
-            for num in range(N):
-                if term in term_freq[num]:
-                    df += 1
-            if df == 0:
-                idf = 0
-            else:
-                idf = np.log10((N / df))
-            idf_freq[term] = idf
-        return idf
-
-    def compute_tfidf(self,data, collection):
-        tfidf = {}  # Diccionario para almacenar los resultados TF-IDF
-        idf_freq = {}  # Diccionario para almacenar la frecuencia inversa de documentos (IDF)
-        index = {}  # Diccionario para almacenar el índice de términos
-        length = {}  # Diccionario para almacenar la longitud de vectores normalizados
-
-        term_freq, orden_keywords = self.calculo_tf(collection)# Contar la frecuencia de cada término en cada documento
-
-        for doc_id, doc in enumerate(collection):
-            nameDoc = str(data.iloc[int(doc_id), 0])
-            smoothed_tf = []
-
-            for tup_term in orden_keywords:
-                term = tup_term[0]
-                # Cálculo del índice
-                if term in term_freq[doc_id]:
-                    tf_t_d = term_freq[doc_id][term]
-                    if term_freq[doc_id][term] != 0:
-                        if term in index:
-                            index[term].append((nameDoc, tf_t_d))
-                        else:
-                            index[term] = [(nameDoc, tf_t_d)]
-                    # Cálculo del TF
-                    tf = np.log10(tf_t_d + 1)
-                    # Cálculo del IDF
-                    idf = self.calculo_idf(term, idf_freq, term_freq, len(collection))
-                    smoothed_tf.append(round(tf * idf, 3))
-                else:
-                    smoothed_tf.append(0)
-
-            # Cálculo de la longitud del vector (norma)
-            array = np.array(list(smoothed_tf))
-            length[nameDoc] = np.linalg.norm(array)
-            tfidf[nameDoc] = smoothed_tf
-
-        return length, idf_freq, index
+    
 
 
 
@@ -135,26 +69,27 @@ class InvertedIndex:
         stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
         for caracter in stoplist_extended:
             self.stopList.append(caracter)
-        #print(self.stopList)
+        print(self.stopList)
     
     def preProcessCSV(self,ruta_archivo):
+
+    #1) Obtencion  del tamaño del archivo  y variables de posicion
         tamano_bytes = os.path.getsize(ruta_archivo) # total de bytes en el csv
         
-        #cont = 0
         pos_row = 0 # pos de fila que se está leyendo
         
         
-            
+    #2) Lectura del encabezado del archivo
         # Abrir el archivo en modo lectura
         with open(ruta_archivo, "rt", encoding="utf-8") as archivo:
 
             """ENCABEZADO"""
-            encabezado_text = archivo.readline()
+            encabezado_text = archivo.readline() # Lee la primera línea del archivo para obtener el (encabezado)
             pos_row += len(encabezado_text.encode("utf-8"))  # Tamaño de la línea en bytes
             #pos_row += 1 #para contar donde inicia fila que sigue
-
+        #divide los encabezados por coma
             self.colection_header = encabezado_text.strip().split(',')
-            #print('Encabezados del CSV:', self.colection_header)
+            print('Encabezados del CSV:', self.colection_header)
             
             #print(pos_row)
 
@@ -163,6 +98,7 @@ class InvertedIndex:
 
             normas = {} # diccionario para normas
 
+        #para leer el archivo linea por linea hasta que se acabe el archivo
             while tamano_bytes>pos_row:#-3>=pos_row:
                 pos_row = self.getBufferIndex(pos_row,archivo,cont_buffer,normas) #parametro i para nro de archivo .json
                 
@@ -174,7 +110,6 @@ class InvertedIndex:
                     print(c,end='-')
                 print("\n")
             """
-                 
         ruta_normas = ruta_stoplist+r"\normas.json" #generamos un archivo json para guardar info de las normas ([pos_row]:norma)
         print("guardando normas")
         with open(ruta_normas, "w") as archivo:
@@ -213,7 +148,7 @@ class InvertedIndex:
             print(cont)
     """
 
-    def getBufferIndex(self,pos_inicio,archivo,nro_buffer,normas):
+    def getBufferIndex(self,pos_inicio,archivo,nro_buffer,normas): #funcion ´para obtener indice invertido de un buffer
 
         # se posiciona en el csv
         archivo.seek(pos_inicio)
@@ -321,7 +256,7 @@ class InvertedIndex:
             #obtendremos la norma por cada campo (mientras preprocesamos)
             #tf_campo = self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row,tf_local=tf_local) 
             #tf_total += tf_campo # almacenamos la suma de tf's (de todos los campos)
-
+     
             self.preProcessandIndex(texto=campo,dicc_lexemas=dicc_lexemas,peso=self.pesos[i],pos_row=pos_row,tf_local=tf_local) 
             #print("Lexemas+tf: ",dicc_lexemas) #verificacion del indice invertido por linea
 
@@ -431,38 +366,53 @@ class InvertedIndex:
     
         #print(dicc_lexemas)
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
+    def processQuery(query):
+        tokens = nltk.word_tokenize(query.lower())
+
+        # sacar el lexema
+        stemmer = SnowballStemmer('english')
+
+        stopList = []
+
+        stop_words = open(ruta_stoplist, "r", encoding="latin1") 
+
+        for i in stop_words:
+            stopList.append(i.strip('\n')) #se agrega cada elemento quitando saltos de linea
+
+        stop_words.close() #cierra archivo leido
+
+        stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
+        for caracter in stoplist_extended:
+            stopList.append(caracter)
+
+        
+        result = {}
+        for token in tokens:
+            if token not in stopList:
+                lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
+                if token not in result:
+                    result[lexema] = 1
+                else:
+                    result[lexema] += 1
+        return result
+    
+    def cosine_similarity(self, a, b):
+        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
+    def calculate_cosine_similarity(self, query_vector, document_vectors):
+        similarities = []
+        for doc_vector in document_vectors:
+            similarity = cosine_similarity([query_vector], [doc_vector])
+            similarities.append(similarity[0][0])
+        return similarities
+    
+    def process_query_and_calculate_similarity(self, query):
+        query_vector = self.processQuery(query)
+        # Suponiendo que tienes los vectores de documentos almacenados en self.document_vectors
+        similarities = self.calculate_cosine_similarity(query_vector, self.document_vectors)
+        return similarities
     
 
 
 
-def processQuery(query):
-    tokens = nltk.word_tokenize(query.lower())
-
-    # sacar el lexema
-    stemmer = SnowballStemmer('english')
-
-    stopList = []
-
-    stop_words = open(ruta_stoplist, "r", encoding="latin1") 
-
-    for i in stop_words:
-        stopList.append(i.strip('\n')) #se agrega cada elemento quitando saltos de linea
-
-    stop_words.close() #cierra archivo leido
-
-    stoplist_extended = "'«[]¿?$+-*'.,»:;!,º«»()@¡😆“/#|*%'&`"
-    for caracter in stoplist_extended:
-        stopList.append(caracter)
-
-    
-    result = {}
-    for token in tokens:
-        if token not in stopList:
-            lexema = stemmer.stem(tokens[i]) #obtenemos el lexema
-            if token not in result:
-                result[lexema] = 1
-            else:
-                result[lexema] += 1
-    return result
-
-    
