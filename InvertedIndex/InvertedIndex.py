@@ -379,7 +379,7 @@ class InvertedIndex:
         #print(dicc_lexemas)
         #return dicc_lexemas #retorna diccionario de lexemas con su tf
 
-    def processQuery(self,query):
+    def processQuery(self,query): #returns the tf of each query's word
         tokens = nltk.word_tokenize(query.lower())
 
         # sacar el lexema
@@ -396,9 +396,13 @@ class InvertedIndex:
                     result[lexema] = 1
                 else:
                     result[lexema] += 1
+
+        # obtenemos tf de la query
+        for term in result:
+            result[term] = round(math.log10(1+result[term]),3)
         return result
     
-    def contar_archivos_json(self):
+    def contar_archivos_json(self): # returns the number of json files in the final merge
         # Obtener la lista de archivos en la carpeta
         archivos_en_carpeta = os.listdir(final_index)
 
@@ -410,15 +414,49 @@ class InvertedIndex:
 
         return numero_archivos_json
     
-    def cosine(self,termsQuery):
-        docs = {}
-
+    def cosine(self,termsQuery,topK=0): # returns the cosine between query and each row (in this case, we consider row equals to doc)
         if self.nro_buckets == 0:
             self.nro_buckets = self.contar_archivos_json()
-        print(self.nro_buckets)
-            
+        #print(self.nro_buckets)
+
+        QueryNorm = 0  # we need query's norm
+        cosine = {} # we need to know the rows that match with query's terms, the keys of this dict will be the pos_row's
+        
         for term in termsQuery:
-            docs = find_word(term,self.nro_buckets)
-            print(term,"aparece en",len(docs),"rows")
+            QueryNorm += termsQuery[term]**2
+
+            # we need to obtain the doc product between each term of query and row
+            valuesTerm = find_word(term,self.nro_buckets)
+            print(term,"aparece en",len(valuesTerm),"rows")
+
+            for value in valuesTerm: #here, we itere in each pos_row
+                if value not in cosine: #this means that not other term was in this row, this is the first match
+                    cosine[value] = valuesTerm[value]*termsQuery[term] # multiply the tf of the row and of the query
+                else: #this means that the row has another word that match with the term, so we increase the value of the product
+                    cosine[value] += valuesTerm[value]*termsQuery[term]
+            
+        #print(cosine)
+
+        QueryNorm = round(math.sqrt(QueryNorm),3) # we obtain the query's norm
+
+        # until here, we have de sum of the dot product for each term of the query
+        # Now, we need to divide it using the norm of the query and the norm of each row
+        ruta_normas = ruta_stoplist+r"\normas.json" #read the norms
+        with open(ruta_normas, 'r') as archivo_json:
+            norms = json.load(archivo_json)
+        #print(norms) # just in case
+
+        for row in cosine:
+            RowNorm = norms[row] # first, we obtain the norm of the row
+            cosine[row] = round(cosine[row]/(QueryNorm*RowNorm),4)
+        # print(cosine) # just in case
+
+        # now, we have to find the topK similarities
+        if topK!=0:
+            cosine = {k: v for k, v in sorted(cosine.items(), key=lambda item: item[1], reverse=True)}
+            return dict(list(cosine.items())[:topK])
+        print(cosine)
+        return cosine
+
 
 
