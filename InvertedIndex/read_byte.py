@@ -6,25 +6,26 @@ archivo_csv = r"C:\Users\ASUS\Downloads\prueba\styles.csv"
 
 # Posición específica en bytes donde se encuentra la línea que deseas leer
 #posicion_bytes = 4376342  # Por ejemplo, la posición 100 en el archivo
-posicion_bytes = 1211484
+#posicion_bytes = 1211484
 
 
 """tamaño de primera linea es 97, pero para leer la segunda -> pos_row = 98"""
 #posicion_bytes = 98+93+1  # Por ejemplo, la posición 100 en el archivo
+def get_row(posicion_bytes):
+    # Abre el archivo en modo lectura en binario
+    with open(archivo_csv, 'rb') as archivo:
+        # Posiciona el puntero del archivo en la posición específica
+        archivo.seek(int(posicion_bytes))
 
-# Abre el archivo en modo lectura en binario
-with open(archivo_csv, 'rb') as archivo:
-    # Posiciona el puntero del archivo en la posición específica
-    archivo.seek(posicion_bytes)
+        # Lee la línea en la posición específica
+        linea_especifica = archivo.readline()
 
-    # Lee la línea en la posición específica
-    linea_especifica = archivo.readline()
+        # Convierte los bytes a cadena (decodificación utf-8)
+        linea_especifica = linea_especifica.decode('utf-8')
 
-    # Convierte los bytes a cadena (decodificación utf-8)
-    linea_especifica = linea_especifica.decode('utf-8')
-
-    # Imprime la línea específica
-    print(f'Linea en la posicion {posicion_bytes} bytes: {linea_especifica}')
+        return linea_especifica
+        # Imprime la línea específica
+        #print(f'Linea en la posicion {posicion_bytes} bytes: {linea_especifica}')
 
 
 # with open("normas.json","r") as archivo: #abre archivo de normas
