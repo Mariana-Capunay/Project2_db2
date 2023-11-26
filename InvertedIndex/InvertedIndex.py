@@ -427,7 +427,7 @@ class InvertedIndex:
 
             # we need to obtain the doc product between each term of query and row
             valuesTerm = find_word(term,self.nro_buckets)
-            print(term,"aparece en",len(valuesTerm),"rows")
+            #print(term,"aparece en",len(valuesTerm),"rows")
 
             for value in valuesTerm: #here, we itere in each pos_row
                 if value not in cosine: #this means that not other term was in this row, this is the first match
@@ -454,7 +454,7 @@ class InvertedIndex:
         # now, we have to find the topK similarities
         if topK!=0:
             cosine = {k: v for k, v in sorted(cosine.items(), key=lambda item: item[1], reverse=True)}
-            return dict(list(cosine.items())[:topK])
+            return dict(list(cosine.items())[:topK+1])
         print(cosine)
         return cosine
 
