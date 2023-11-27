@@ -50,3 +50,7 @@ class KNN_High_D_Tree:
         result_ids = result_ids
         return generate_image_info.get_data_images(result_ids)
 
+a = KNN_High_D_Tree(20)
+result = a.knn_search(46113,k=5)
+for i in result:
+    print(i)

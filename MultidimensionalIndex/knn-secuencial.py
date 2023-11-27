@@ -53,6 +53,6 @@ class KNN_Secuencial:
 		return generate_image_info.get_data_images(result), accepted / len(result)
 
 a = KNN_Secuencial(20)
-result , eficiencia = a.knn_search(3,-1,k=5)
+result , eficiencia = a.knn_search(46113,-1,k=5)
 for i in result:
 	print(i)
