@@ -9,14 +9,15 @@ class KNN_High_D_Tree:
 
     def __init__(self, n_data: int, load_data: bool = True, size:int = 100, rd:bool = True):
         self.n_data = n_data
+        self.size = min(size, n_data)
         p = index.Property()
-        p.dimension = size	
-        self.size = size
+        p.dimension = self.size
+        
         if load_data:
             generate_image_info.load_images(n=n_data)
             generate_image_info.load_features(n=n_data)
         self.idx = index.Index(properties=p)
-        pca = PCA(n_components=min(size, n_data))  
+        pca = PCA(n_components=self.size)  
         
         if rd:
             data = [[]] * n_data
@@ -28,8 +29,8 @@ class KNN_High_D_Tree:
             file = open(pca_vector_images, "wb")
             for i in range(n_data):
                 self.idx.insert(i, tuple(data[i] + data[i]))
-                data = struct.pack('f'*len(data[i]), *data[i])
-                file.write(data)
+                data_to_write = struct.pack('f'*len(data[i]), *data[i])
+                file.write(data_to_write)
                 i += 1
             file.close()
 
@@ -40,11 +41,12 @@ class KNN_High_D_Tree:
         data_file.close()
         return list(struct.unpack('f'*self.size, data_bin))
 
-    def knn_search(self, point: int, k: int = 8):
+    def knn_search(self, id: int, k: int = 8):
+        try:
+            point = generate_image_info.get_pos_to_id(id)
+        except:
+            return []
         result_ids = list(self.idx.nearest(self.get_vector(point), num_results=k))
         result_ids = result_ids
         return generate_image_info.get_data_images(result_ids)
 
-a = KNN_High_D_Tree(10)
-
-print(a.knn_search(2))

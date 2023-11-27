@@ -11,11 +11,14 @@ position_data_file = "position_data.bin"
 position_feature_file = "position_feature.bin"
 images_csv = "images.csv"
 features_csv = "styles.csv"
+id_to_pos_file = "id_to_pos.bin"
 
 INTEGER_BYTES = 4
 FLOAT_BYTES = 4
 N_FEATURES = 9
 EXPECTED_LENGTH_DATA = 4000
+
+id_to_pos = {}
 
 
 def get_feature_vector(picture, cortes=3):
@@ -27,6 +30,7 @@ def get_feature_vector(picture, cortes=3):
 
 def load_images(n: int):
     # Abre el archivo TXT en modo de escritura binario
+    ids = []
     with open(output_file, 'wb') as file:
         position_data = open(position_data_file, "wb")
         links_image = pd.read_csv(images_csv)
@@ -44,11 +48,19 @@ def load_images(n: int):
             img_encoding = get_feature_vector(img_res, 4)
             assert EXPECTED_LENGTH_DATA == len(img_encoding), "INVALID DATA"
             id = int(str(image_name[:len(image_name)-4]))
+            ids.append([id, i])
+            id_to_pos[id] = i
             data = struct.pack('i' + 'f'*len(img_encoding), id, *img_encoding)
             file.write(data)
             i += 1
         position_data.close()
+    ids.sort()
 
+    id_file = open(id_to_pos_file, "wb")
+    for i in range(n):
+        print(ids[i][0],ids[i][1])
+        id_file.write(struct.pack('ii', ids[i][0], ids[i][1]))
+    id_file.close()
     return EXPECTED_LENGTH_DATA
 
 
@@ -62,6 +74,28 @@ def get_vector(n: int):
     data_bin = data_file.read(INTEGER_BYTES + EXPECTED_LENGTH_DATA * FLOAT_BYTES)
     data_file.close()
     return list(struct.unpack('i' + 'f'*EXPECTED_LENGTH_DATA, data_bin))[1:]
+
+
+def get_pos_to_id(id: int, n: int):
+    ini = 0
+    fin = n-1
+    file = open(id_to_pos_file, "rb")
+    while ini < fin:
+        mid = (ini + fin + 1) // 2
+        file.seek(2*INTEGER_BYTES*mid)
+        data = file.read(INTEGER_BYTES)
+        [returned_id] = struct.unpack('i', data) 
+        if id < returned_id:
+            fin = mid-1
+        else:
+            ini = mid
+    file.seek(2*INTEGER_BYTES*ini)
+    data = file.read(2*INTEGER_BYTES)
+    file.close()
+    (returned_id, pos) = list(struct.unpack('ii', data))
+    if returned_id != id:
+        return -1
+    return pos
 
 
 def load_features(n: int):
@@ -118,3 +152,5 @@ def get_distance(x: int, y: int):
     vector_x = np.array(get_vector(x))
     vector_y = np.array(get_vector(y))
     return np.array(np.sum(abs(vector_x-vector_y) ** 2)) ** 1/2
+
+

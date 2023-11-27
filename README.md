@@ -21,7 +21,7 @@
 8. [Análisis de la maldición de la dimensionalidad y cómo mitigarlo](#id8)
 
 ## Frontend
-9. [Diseño del índice con PostgreSQL/MongoDB](#id9)
+9. [Diseño del índice con PostgreSQL](#id9)
 10. [Análisis comparativo con su propia implementación](#id10)
 11. [Screenshots de la GUI](#id11)
 ## Experimentación
@@ -213,13 +213,37 @@ Adicional a ello, cabe recalcar que ya tenemos el índice invertido global de nu
 
 Todo esto facilita el tiempo de las consultas (considerando que el índice invertido global del dataset solo se genera al inicio de nuestro programa y luego no se modifica).
 
-## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo
+## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo <a name="id8"></a>
 
-## 9. Diseño del índice con PostgreSQL/MongoDB
+## 9. Diseño del índice con PostgreSQL <a name="id9"></a>
 
-## 10. Análisis comparativo con su propia implementación
+- Para cargar nuestro dataset en postgress hicimos uso de las librerías *psycopg2* y *csv*.
+  <p align="center">
+    <img src="images/librerias_sql.png" alt="Uso de psycopg2" width="450" height="">
+  </p>  
 
-## 11. Screenshots de la GUI
+- Lo primero que hicimos, fue definir la función **init** para crear la tabla *styles* y poblarla con los datos del dataset.
+  <p align="center">
+    <img src="images/create_table_sql.png" alt="Creando la tabla styles, en caso no exista" width="750" height="">
+  </p>  
+
+- Además, dentro de la misma función, añadimos la creación de dos columnas del tipo *weighted_tsv*. Una de estas la indexaremos y será la que usaremos en nuestra búsqueda.
+  <p align="center">
+    <img src="images/add_vector_sql.png" alt="Creando columnas de tipo weighted_tsv" width="750" height="">
+  </p> 
+
+- Luego, definimos la función para retornar las k filas más similares a una query.
+  <p align="center">
+    <img src="images/searchk_sql.png" alt="Consulta para retornar k más similares" width="750" height="">
+  </p> 
+
+  *Al momento de realizar las pruebas notamos que si concatenamos cada palabra de la query con el operador AND ('&') se tiene respuestas más similares que si concatenamos los elementos con OR ('|'). Atribuimos que esto se da porque,  [según la documentación de SQL](https://www.postgresql.org/docs/current/textsearch-controls.html), la versión de búsqueda no considera la rareza de un término.* 
+
+
+
+## 10. Análisis comparativo con su propia implementación <a name="id10"></a>
+
+## 11. Screenshots de la GUI <a name="id11"></a>
   - Pantalla principal
   <p align="center">
     <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
@@ -227,4 +251,6 @@ Todo esto facilita el tiempo de las consultas (considerando que el índice inver
 
 
 
+## 12. Tablas y gráficos de los resultados <a name="id12"></a>
 
+## 13. Análisis y discusión <a name="id13"></a>
