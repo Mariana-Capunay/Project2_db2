@@ -7,7 +7,7 @@ pca_vector_images = "pca_vector_images.bin"
 
 class KNN_High_D_Tree:
 
-    def __init__(self, n_data: int, load_data: bool = True, size:int = 100, rd:bool = True):
+    def __init__(self, n_data: int, load_data: bool, size:int = 100, rd:bool = True):
         self.n_data = n_data
         self.size = min(size, n_data)
         p = index.Property()
@@ -48,7 +48,3 @@ class KNN_High_D_Tree:
         result_ids = result_ids
         return generate_image_info.get_data_images(result_ids)
 
-a = KNN_High_D_Tree(20)
-result = a.knn_search(46113,k=5)
-for i in result:
-    print(i)

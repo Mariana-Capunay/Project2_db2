@@ -3,7 +3,7 @@ import heapq
 
 
 class KNN_Secuencial:
-	def __init__(self, n_data: int, load_data: bool = True):
+	def __init__(self, n_data: int, load_data: bool):
 		self.n_data = n_data
 		if load_data:
 			generate_image_info.load_images(n=n_data)

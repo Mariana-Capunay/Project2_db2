@@ -3,7 +3,7 @@ from rtree import index
 
 
 class KNN_R_Tree:
-	def __init__(self, n_data: int, load_data: bool = True):
+	def __init__(self, n_data: int, load_data: bool):
 		self.n_data = n_data
 		p = index.Property()
 		p.dimension = generate_image_info.EXPECTED_LENGTH_DATA 		

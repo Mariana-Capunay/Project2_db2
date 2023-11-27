@@ -58,7 +58,6 @@ def load_images(n: int):
 
     id_file = open(id_to_pos_file, "wb")
     for i in range(n):
-        print(ids[i][0],ids[i][1])
         id_file.write(struct.pack('ii', ids[i][0], ids[i][1]))
     id_file.close()
     return EXPECTED_LENGTH_DATA
