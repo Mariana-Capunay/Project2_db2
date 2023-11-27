@@ -247,7 +247,7 @@ Todo esto facilita el tiempo de las consultas (considerando que el índice inver
   - Pantalla principal
 
   <p align="center">
-    <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
+    <img src="images/frontend.png" alt="Página principal" width="800" height="">
   </p>
 
 
