@@ -61,7 +61,7 @@ def get_vector(n: int):
     data_file.seek(position_in_file)
     data_bin = data_file.read(INTEGER_BYTES + EXPECTED_LENGTH_DATA * FLOAT_BYTES)
     data_file.close()
-    return list(struct.unpack('i' + 'f'*EXPECTED_LENGTH_DATA, data_bin))
+    return list(struct.unpack('i' + 'f'*EXPECTED_LENGTH_DATA, data_bin))[1:]
 
 
 def load_features(n: int):
@@ -109,7 +109,7 @@ def get_data_images(elements: list[int]):
         if i-1 in elements:
             cur = cur[:-1]
             cur = cur.split(',')
-            cur.append(get_feature(i-1, N_FEATURES)[:-1])
+            cur.append(get_feature(i, N_FEATURES)[:-1])
             data[d[i-1]] = cur 
     return data
 
@@ -118,4 +118,3 @@ def get_distance(x: int, y: int):
     vector_x = np.array(get_vector(x))
     vector_y = np.array(get_vector(y))
     return np.array(np.sum(abs(vector_x-vector_y) ** 2)) ** 1/2
-
