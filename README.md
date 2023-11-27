@@ -25,7 +25,7 @@
 10. [Análisis comparativo con su propia implementación](#id10)
 11. [Screenshots de la GUI](#id11)
 ## Experimentación
-12. [Tablas y gráficos de los resultados](#id12)
+12. [Resultados de la query](#id12)
 13. [Análisis y discusión](#id13)
 ----------------------------------------------
 
@@ -213,7 +213,11 @@ Adicional a ello, cabe recalcar que ya tenemos el índice invertido global de nu
 
 Todo esto facilita el tiempo de las consultas (considerando que el índice invertido global del dataset solo se genera al inicio de nuestro programa y luego no se modifica).
 
+----------------------------------------------
+
 ## 8. Análisis de la maldición de la dimensionalidad y cómo mitigarlo <a name="id8"></a>
+
+----------------------------------------------
 
 ## 9. Diseño del índice con PostgreSQL <a name="id9"></a>
 
@@ -239,18 +243,62 @@ Todo esto facilita el tiempo de las consultas (considerando que el índice inver
 
   *Al momento de realizar las pruebas notamos que si concatenamos cada palabra de la query con el operador AND ('&') se tiene respuestas más similares que si concatenamos los elementos con OR ('|'). Atribuimos que esto se da porque,  [según la documentación de SQL](https://www.postgresql.org/docs/current/textsearch-controls.html), la versión de búsqueda no considera la rareza de un término.* 
 
-
+----------------------------------------------
 
 ## 10. Análisis comparativo con su propia implementación <a name="id10"></a>
 
+----------------------------------------------
+
 ## 11. Screenshots de la GUI <a name="id11"></a>
   - Pantalla principal
+
   <p align="center">
-    <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
+    <img src="images/frontend.png" alt="Página principal" width="800" height="">
   </p>
 
 
+----------------------------------------------
 
-## 12. Tablas y gráficos de los resultados <a name="id12"></a>
+## 12. Resultados de la query <a name="id12"></a>
+- Aplicamos la query textual *"red shoes"*
+  - Resultados con índice invertido
+    <p align="center">
+      <img src="images/red_shoes_inverted_index.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+  - Resultados con postgresSQL
+    <p align="center">
+      <img src="images/red_shoes_sql.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+- Aplicamos la query textual *"green pants"*
+  - Resultados con índice invertido
+    <p align="center">
+      <img src="images/green_pants_inverted_index.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+  - Resultados con postgresSQL
+    <p align="center">
+      <img src="images/green_pants_sql.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+A continuación, se tiene un caso de prueba antes de pasar toda la implementación al frontend. Aplicamos la query textual *"yellow casual pants are yellow"*.
+  - Resultados con índice invertido
+    <p align="center">
+      <img src="images/yellow_casual_pants_indice_invertido.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+  - Resultados con postgresSQL
+    <p align="center">
+      <img src="images/yellow_casual_pants_sql.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+----------------------------------------------
 
 ## 13. Análisis y discusión <a name="id13"></a>
+
+- Al aplicar las queries textuales y comparar su similitud con los resultados obtenidos en postgresSQL, notamos que nuestra implementación es mucho más óptima al retornar los resultados similares. 
+- Postgres proporciona búsquedas más exactas al enviar cada palabra de la query concatenada con el operador AND ("&"), pero al usar el operador OR ("|") no considera la rareza de los términos, ya que da resultados sin considerar que hay palabras que aparecen con mucha frecuencia. Esto lo notamos al ejecutar una query que tenía un término frecuente (como "casual").
+
+
+
