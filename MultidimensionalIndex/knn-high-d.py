@@ -42,10 +42,8 @@ class KNN_High_D_Tree:
         return list(struct.unpack('f'*self.size, data_bin))
 
     def knn_search(self, id: int, k: int = 8):
-        try:
-            point = generate_image_info.get_pos_to_id(id)
-        except:
-            return []
+        point = generate_image_info.get_pos_to_id(id, self.n_data)
+        assert point >= 0, "No existe el ID"
         result_ids = list(self.idx.nearest(self.get_vector(point), num_results=k))
         result_ids = result_ids
         return generate_image_info.get_data_images(result_ids)

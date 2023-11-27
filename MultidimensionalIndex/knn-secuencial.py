@@ -25,11 +25,8 @@ class KNN_Secuencial:
 		return generate_image_info.get_data_images(result), n_good / total 
 	
 	def knn_search(self, id: int, feature: int, k: int = 8):
-		try:
-			point = generate_image_info.get_pos_to_id(id)
-		except:
-			return []
-
+		point = generate_image_info.get_pos_to_id(id, self.n_data)
+		assert point >= 0, "No existe el ID"
 		value_point = generate_image_info.get_feature(point, feature) if feature != -1 else 0
 		heap = []
 		for i in range(self.n_data):
@@ -52,7 +49,4 @@ class KNN_Secuencial:
 				accepted += 1
 		return generate_image_info.get_data_images(result), accepted / len(result)
 
-a = KNN_Secuencial(20)
-result , eficiencia = a.knn_search(3,-1,k=5)
-for i in result:
-	print(i)
+
