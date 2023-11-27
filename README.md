@@ -25,7 +25,7 @@
 10. [Análisis comparativo con su propia implementación](#id10)
 11. [Screenshots de la GUI](#id11)
 ## Experimentación
-12. [Tablas y gráficos de los resultados](#id12)
+12. [Resultados de la query](#id12)
 13. [Análisis y discusión](#id13)
 ----------------------------------------------
 
@@ -245,12 +245,38 @@ Todo esto facilita el tiempo de las consultas (considerando que el índice inver
 
 ## 11. Screenshots de la GUI <a name="id11"></a>
   - Pantalla principal
+
   <p align="center">
     <img src="images/mainpage.PNG" alt="Página principal" width="800" height="">
   </p>
 
 
 
-## 12. Tablas y gráficos de los resultados <a name="id12"></a>
+## 12. Resultados de la query <a name="id12"></a>
+- Aplicamos la query textual *"red shoes"*
+  - Resultados con índice invertido
+    <p align="center">
+      <img src="images/red_shoes_inverted_index.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+  - Resultados con postgresSQL
+    <p align="center">
+      <img src="images/red_shoes_sql.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+- Aplicamos la query textual *"green pants"*
+  - Resultados con índice invertido
+    <p align="center">
+      <img src="images/green_pants_inverted_index.jfif" alt="Página principal" width="800" height="">
+    </p>
+
+  - Resultados con postgresSQL
+    <p align="center">
+      <img src="images/green_pants_sql.jfif" alt="Página principal" width="800" height="">
+    </p>
 
 ## 13. Análisis y discusión <a name="id13"></a>
+
+- Al aplicar las queries textuales y comparar su similitud con los resultados obtenidos en postgresSQL, notamos que nuestra implementación es mucho más óptima al retornar los resultados similares. Sin embargo, postgres proporciona búsquedas más exactas al enviar cada palabra de la query con el operador AND ("&"), pero al usar el operador OR("|") no considera la rareza de los términos, ya que da resultados sin considerar que hay palabras que aparecen con mucha frecuencia.
+
+
