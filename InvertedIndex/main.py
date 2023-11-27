@@ -15,7 +15,7 @@ indice = InvertedIndex()
 ################################################################ Query 
 
 #1. Procesamos la query y calculamos similitudes
-InvertedIndexQuery = indice.processQuery("yellow casual pants are yellow") # obtenemos similitudes
+InvertedIndexQuery = indice.processQuery("adidas shoes red") # obtenemos similitudes
 print("processQuery:",InvertedIndexQuery)
 
 #2. Calculamos el coseno entre query y los docs

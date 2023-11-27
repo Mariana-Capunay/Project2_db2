@@ -12,6 +12,7 @@
     <form action="/consulta" method="post">
       <input type="text" id="searchQuery" placeholder="Ingresa la Query...">
       <input type="number" id="topk" placeholder="Ingresa el top K...">
+      <button id="selection-button" type="button">Buscar</button>
     </form>
   </div>
 
@@ -118,7 +119,7 @@ function nextPage() {
   // Implementa la lógica para ir a la página siguiente
 }
 
-document.getElementById('searchButton').addEventListener('click', function() {
+document.getElementById('selection-button').addEventListener('click', function() {
   const searchTerm = document.getElementById('searchQuery').value;
   const topK = document.getElementById('topk').value;
   // Realiza la búsqueda según la tabla seleccionada
@@ -131,7 +132,37 @@ document.getElementById('searchButton').addEventListener('click', function() {
 
 function searchTableA(searchTerm, topK) {
   // Realiza la búsqueda en la tabla A y actualiza la interfaz
-  
+  fetch('/search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({searchTerm,topK}),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    document.getElementById('tablaA-body').innerHTML = '';
+    data.forEach(result => {
+      document.getElementById('tablaA-body').innerHTML += `
+        <tr>
+          <td>${result[0]}</td>
+          <td>${result[1]}</td>
+          <td>${result[2]}</td>
+          <td>${result[3]}</td>
+          <td>${result[4]}</td>
+          <td>${result[5]}</td>
+          <td>${result[6]}</td>
+          <td>${result[7]}</td>
+          <td>${result[8]}</td>
+          <td>${result[9]}</td>
+        </tr>
+      `;
+    });
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
   // Puedes usar AJAX o fetch para hacer la solicitud al servidor
 }
 

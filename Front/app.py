@@ -1,9 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import time
 import psycopg2
-import psql_connection as psql
+# import psql_connection as psql
 import csv
 
+
+#    from InvertedIndex import InvertedIndex as indice
+# ModuleNotFoundError: No module named 'InvertedIndex'
+import sys;
+sys.path.append(r'C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex') #path to InvertedIndex
+from InvertedIndex import InvertedIndex as indice #importar la clase InvertedIndex del modulo InvertedIndex
+from read_byte import get_row as rb #importar la funcion get_row del modulo read_byte
 app = Flask(__name__)
 
 # Creating simple Routes 
@@ -24,28 +31,45 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.route('/consulta', methods=['POST'])
-def resultados():
-    query = request.form.get('query')
-    topk = request.form.get('topk')
-    # Define la configuración de la base de datos (modificar)
-    db_config = {
-    'dbname': 'test_connection',
-    'user': 'postgres',
-    'password': '76591212',
-    'host': 'localhost',
-    'port': 5432
-    }
-    # Realiza la consulta SQL en tu base de datos
-    connection = psycopg2.connect(**db_config)
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM styles WHERE productDisplayName ILIKE %s LIMIT %s", ('%' + query + '%', topk))
-    results = cursor.fetchall()
-    cursor.close()
-    connection.close()
+@app.route('/search', methods=['POST'])
+def search():
+    searchTerm = request.json['searchTerm']
+    topk = request.json['topk']
 
-    # También obtén el tiempo de ejecución 
-    return render_template("resultados.html", results=results, query=query, topk=topk)
+    InvertedIndexQuery = indice.processQuery(searchTerm)
+    result = indice.cosine(InvertedIndexQuery,topk)
+
+    rows = [rb.get_row(pos_row) for pos_row in result]
+
+    return jsonify(rows)
+
+
+
+
+
+
+# @app.route('/consulta', methods=['POST'])
+# def resultados():
+#     query = request.form.get('query')
+#     topk = request.form.get('topk')
+#     # Define la configuración de la base de datos (modificar)
+#     db_config = {
+#     'dbname': 'test_connection',
+#     'user': 'postgres',
+#     'password': '76591212',
+#     'host': 'localhost',
+#     'port': 5432
+#     }
+#     # Realiza la consulta SQL en tu base de datos
+#     connection = psycopg2.connect(**db_config)
+#     cursor = connection.cursor()
+#     cursor.execute("SELECT * FROM styles WHERE productDisplayName ILIKE %s LIMIT %s", ('%' + query + '%', topk))
+#     results = cursor.fetchall()
+#     cursor.close()
+#     connection.close()
+
+#     # También obtén el tiempo de ejecución 
+#     return render_template("resultados.html", results=results, query=query, topk=topk)
 
 
 @app.route('/PgAdmin')
@@ -53,8 +77,9 @@ def pgAdmin():
     return render_template("pgAdmin.html")
 
 @app.errorhandler(404)
-def page_not_found():
-    return jsonify({"message": "Página no encontrada, :( )"}), 404
+def page_not_found(e):
+    # nota que ahora estamos aceptando un parámetro 'e' en la función
+    return "Página no encontrada", 404
 
 # Make sure this we are executing this file
 if __name__ == '__main__':
