@@ -62,19 +62,39 @@ def search():
 
     rows = [get_row(pos_row) for pos_row in result]
 
-    print("Filas que coinciden: ")
+    print("Filas que coinciden----------------: ")
     print(rows)
 
     #obetener el id de los rows
-    ids = [row[0] for row in rows]
-    print(ids)
+    # ['46113,Men,Footwear,Shoes,Casual Shoes,Red,Summer,2012,Casual,ADIDAS Men Red Shoes\n', 
+    #  "5922,Men,Footwear,Shoes,Casual Shoes,Red,Summer,2011,Casual,ADIDAS Men's Slimsollm Red Shoe\n", 
+    #  '4025,Unisex,Footwear,Shoes,Casual Shoes,Red,Summer,2011,Casual,ADIDAS Unisex High Can Red Black Shoe\n',
+    #    '13927,Men,Footwear,Shoes,Casual Shoes,Red,Fall,2011,Casual,ADIDAS Men Addcash Red Casual Shoes\n',
+    #      '39904,Men,Footwear,Shoes,Sports Shoes,Red,Summer,2012,Sports,ADIDAS Men Red Adipure Sports Shoes\n']
+    #obtener el id de los rows, 46113,5922,4025,13927,39904
+    lista=rows
+    for i in range(len(lista)):
+        lista[i] = lista[i].split(",")[0]
+        fila = b.knn_search(int(lista[i]), -1, topk)
+        # [['15970.jpg', 'http://assets.myntassets.com/v1/images/style/properties/7a5b82d1372a7a5c6de67ae7a314fd91_images.jpg', 'Peter England Men Party Blue Jeans'], 
+        #  ['47957.jpg', 'http://assets.myntassets.com/v1/images/style/properties/Murcia-Women-Blue-Handbag_13cfaff26872c298112a8e7da15c1e1d_images.jpg', 'Ben 10 Boys Navy Blue Slippers'],
+        # ['53759.jpg', 'http://assets.myntassets.com/v1/images/style/properties/Puma-Men-Grey-T-shirt_32668f8a61454d0cc028a808cf21b383_images.jpg', 'Inkfruit Mens Chain Reaction T-shirt'], 
+        # ['30805.jpg', 'http://assets.myntassets.com/v1/images/style/properties/06e9d4231254fdb2c7fe967ad413ad7b_images.jpg', 'Jealous 21 Women Purple Shirt'],
+        #   ['26960.jpg', 'http://assets.myntassets.com/v1/images/style/properties/45ddbc6a15140556214e15923244755b_images.jpg', 'Puma Men Pack of 3 Socks'], 
+        #   ['1855.jpg', 'http://assets.myntassets.com/v1/images/style/properties/9c1b19682ecf926c296f520d5d6e0972_images.jpg', 'Fabindia Men Striped Green Shirt']]
+        #Esto es lo qeu me devuelve fila y quiero añadir a la lista de rows el link de la imagen
+        # que se añada a la lista de rows el link de la imagen
+        rows[i] = rows[i] + fila[0][1]
+        print(rows[i])
 
+    #id = rows[0].split(",")[0]
+
+    #print(ids)
+    #print()
     #llamar a la funcion knn_search del modulo knn-secuencial
     #fila = b.knn_search(id, -1, topk)
-    print("Filas que coinciden: ")
-    print(rows)
-
-
+    #print("Fila: ")
+    #print(fila)
 
     return jsonify(rows)
 

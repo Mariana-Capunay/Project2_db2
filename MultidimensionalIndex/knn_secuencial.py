@@ -51,6 +51,5 @@ class KNN_Secuencial:
 	
 # a = KNN_Secuencial(20, True)
 # rows ,acuarry = a.knn_search(15970, -1,k=5)
-# for row in rows:
-# 	print(row)
-
+# print(rows)
+# print(acuarry)

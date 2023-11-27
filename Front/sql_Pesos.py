@@ -122,7 +122,7 @@ def topKpsql(query, k):
         for new_row in rows2:
             rows.append(new_row)
     for row in rows:
-        print(row,'william')
+        print(row)
     return rows
 
 #init()
