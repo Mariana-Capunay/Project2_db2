@@ -111,11 +111,6 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
     <img src="images\connection.PNG" alt="Uso de psycopg2" width="350" height="">
   </p>
 
-### 2.2 Para el índice multimedia
-### 2.3 Para el frontend
-  - **flask** : 
-
-
 ----------------------------------------------
 
 ## 3. Técnica de indexación de las librerías utilizadas - Indice multimedia <a name="id3"></a>
