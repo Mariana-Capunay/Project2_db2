@@ -49,4 +49,3 @@ class KNN_Secuencial:
 				accepted += 1
 		return generate_image_info.get_data_images(result), accepted / len(result)
 
-
