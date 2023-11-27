@@ -45,6 +45,7 @@ def load_images(n: int):
             img_encoding = get_feature_vector(img_res, 4)
             assert EXPECTED_LENGTH_DATA == len(img_encoding), "INVALID DATA"
             id = int(str(image_name[:len(image_name)-4]))
+            print(id)
             id_to_pos[id] = i
             data = struct.pack('i' + 'f'*len(img_encoding), id, *img_encoding)
             file.write(data)

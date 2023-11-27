@@ -25,7 +25,11 @@ class KNN_Secuencial:
 		return generate_image_info.get_data_images(result), n_good / total 
 	
 	def knn_search(self, id: int, feature: int, k: int = 8):
-		point = generate_image_info.id_to_pos[id]
+		try:
+			point = generate_image_info.id_to_pos[id]
+		except:
+			return []
+
 		value_point = generate_image_info.get_feature(point, feature) if feature != -1 else 0
 		heap = []
 		for i in range(self.n_data):
