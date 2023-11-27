@@ -277,6 +277,8 @@ Todo esto facilita el tiempo de las consultas (considerando que el índice inver
 
 ## 13. Análisis y discusión <a name="id13"></a>
 
-- Al aplicar las queries textuales y comparar su similitud con los resultados obtenidos en postgresSQL, notamos que nuestra implementación es mucho más óptima al retornar los resultados similares. Sin embargo, postgres proporciona búsquedas más exactas al enviar cada palabra de la query con el operador AND ("&"), pero al usar el operador OR("|") no considera la rareza de los términos, ya que da resultados sin considerar que hay palabras que aparecen con mucha frecuencia.
+- Al aplicar las queries textuales y comparar su similitud con los resultados obtenidos en postgresSQL, notamos que nuestra implementación es mucho más óptima al retornar los resultados similares. 
+- Postgres proporciona búsquedas más exactas al enviar cada palabra de la query concatenada con el operador AND ("&"), pero al usar el operador OR ("|") no considera la rareza de los términos, ya que da resultados sin considerar que hay palabras que aparecen con mucha frecuencia. Esto lo notamos al ejecutar una query que tenía un término frecuente (como "casual").
+
 
 
