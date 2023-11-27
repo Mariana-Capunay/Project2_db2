@@ -1,16 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import time
 import psycopg2
-# import psql_connection as psql
 import csv
-
-
-#    from InvertedIndex import InvertedIndex as indice
-# ModuleNotFoundError: No module named 'InvertedIndex'
 import sys;
 sys.path.append(r'C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex') #path to InvertedIndex
-from InvertedIndex import InvertedIndex as indice #importar la clase InvertedIndex del modulo InvertedIndex
-from read_byte import get_row as rb #importar la funcion get_row del modulo read_byte
+from InvertedIndex import InvertedIndex #importar la clase InvertedIndex del modulo InvertedIndex
+from read_byte import get_row #importar la funcion get_row del modulo read_byte
+#imrportamos la funcion init del modulo sql_Pesos
+from sql_Pesos import init
+#imrportamos la funcion topKpsql del modulo sql_Pesos
+from sql_Pesos import topKpsql
+
+
 app = Flask(__name__)
 
 # Creating simple Routes 
@@ -31,45 +32,46 @@ def home():
 def about():
     return render_template("about.html")
 
+indice = InvertedIndex()
 @app.route('/search', methods=['POST'])
 def search():
-    searchTerm = request.json['searchTerm']
-    topk = request.json['topk']
+    searchTerm = request.json.get('searchTerm', None)
+    print(searchTerm)
+    topk = request.json.get('topk', 5)
+    print(topk)
 
     InvertedIndexQuery = indice.processQuery(searchTerm)
     result = indice.cosine(InvertedIndexQuery,topk)
 
-    rows = [rb.get_row(pos_row) for pos_row in result]
+    rows = [get_row(pos_row) for pos_row in result]
 
+    return jsonify(rows)
+
+@app.route('/consulta', methods=['POST'])
+def consulta():
+    searchTerm = request.json.get('searchTerm', None)
+    print(searchTerm)
+    topk = request.json.get('topk', 5)
+    print(topk)
+    #llamar a la funcion init del modulo sql_Pesos
+    #init()
+
+    #llamar a la funcion topKpsql del modulo sql_Pesos
+    rows = topKpsql(searchTerm, topk)
+    # Confirma los cambios en la base de datos
+    #connection.commit()
+    #cursor.close()
+    #connection.close()
+    print("Filas que coinciden: ")
+    print(rows)
     return jsonify(rows)
 
 
 
+    
 
 
 
-# @app.route('/consulta', methods=['POST'])
-# def resultados():
-#     query = request.form.get('query')
-#     topk = request.form.get('topk')
-#     # Define la configuración de la base de datos (modificar)
-#     db_config = {
-#     'dbname': 'test_connection',
-#     'user': 'postgres',
-#     'password': '76591212',
-#     'host': 'localhost',
-#     'port': 5432
-#     }
-#     # Realiza la consulta SQL en tu base de datos
-#     connection = psycopg2.connect(**db_config)
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT * FROM styles WHERE productDisplayName ILIKE %s LIMIT %s", ('%' + query + '%', topk))
-#     results = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-
-#     # También obtén el tiempo de ejecución 
-#     return render_template("resultados.html", results=results, query=query, topk=topk)
 
 
 @app.route('/PgAdmin')

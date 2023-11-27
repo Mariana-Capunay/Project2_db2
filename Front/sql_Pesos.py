@@ -1,13 +1,13 @@
 import psycopg2
 import csv
 
-#ruta_csv = 'C:/Users/ASUS/Downloads/prueba/styles.csv'
-ruta_csv = 'C:/Users/HP/Desktop/styles/styles.csv'
+ruta_csv = 'C:/Users/ASUS/Downloads/prueba/styles.csv'
+#ruta_csv = 'C:/Users/HP/Desktop/styles/styles.csv'
 # Define la configuración de la base de datos (modificar)
 db_config = {
     'dbname': 'test_connection',
     'user': 'postgres',
-    'password': 'coconut',
+    'password': '76591212',
     'host': 'localhost',
     'port': 5432
 }
@@ -27,7 +27,7 @@ def init():
 
         # Iteración en cada fila
         for row in csv_reader:
-            print(row)
+            print(row,'mari')
             # Caso especial si se registran más de 10 elementos en una fila
             while len(row) > 10:
                 print("Sz: ", len(row))
@@ -121,9 +121,10 @@ def topKpsql(query, k):
         rows2 = cursor.fetchall()# now, we append the new rows in the list
         for new_row in rows2:
             rows.append(new_row)
-
     for row in rows:
-        print(row)
+        print(row,'william')
+    return rows
+
 #init()
 query = "yellow casual pants are yellow"
 k = 5

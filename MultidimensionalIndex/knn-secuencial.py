@@ -45,3 +45,8 @@ class KNN_Secuencial:
 			if value_point == 0 or value_point == generate_image_info.get_feature(near_point, feature):
 				accepted += 1
 		return generate_image_info.get_data_images(result), accepted / len(result)
+
+a = KNN_Secuencial(20)
+result , eficiencia = a.knn_search(3,-1,k=5)
+for i in result:
+	print(i)
