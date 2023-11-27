@@ -18,7 +18,7 @@ class KNN_R_Tree:
 
 	def knn_search(self, id: int, k: int = 8):
 		try:
-			point = generate_image_info.id_to_pos[id]
+			point = generate_image_info.get_pos_to_id(id)
 		except:
 			return []
 		result_ids = list(self.idx.nearest(generate_image_info.get_vector(point), num_results=k))
