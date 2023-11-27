@@ -16,7 +16,8 @@ class KNN_R_Tree:
 			vector = generate_image_info.get_vector(i)
 			self.idx.insert(i, tuple(vector + vector))
 
-	def knn_search(self, point: int, k: int = 8):
+	def knn_search(self, id: int, k: int = 8):
+		point = generate_image_info.id_to_pos[id]
 		result_ids = list(self.idx.nearest(generate_image_info.get_vector(point), num_results=k))
 		result_ids = result_ids
 		return generate_image_info.get_data_images(result_ids)
