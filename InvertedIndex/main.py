@@ -1,6 +1,6 @@
 from InvertedIndex import InvertedIndex
 from Global_Index.merge_posting import final_merge
-
+from read_byte import get_row
 # 1. Creamos instancia de Inverted Index
 indice = InvertedIndex()
 
@@ -21,7 +21,7 @@ print("processQuery:",InvertedIndexQuery)
 #2. Calculamos el coseno entre query y los docs
 result = indice.cosine(InvertedIndexQuery,5)
 
-print("Filas que coinciden: ",end="")
+print("Filas que coinciden: ")
 for pos_row in result:
-    print(pos_row)
+    print(get_row(pos_row))
 #print(result)

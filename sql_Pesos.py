@@ -1,6 +1,8 @@
 import psycopg2
 import csv
 
+#ruta_csv = 'C:/Users/ASUS/Downloads/prueba/styles.csv'
+ruta_csv = 'C:/Users/HP/Desktop/styles/styles.csv'
 # Define la configuración de la base de datos (modificar)
 db_config = {
     'dbname': 'test_connection',
@@ -15,7 +17,7 @@ cursor = connection.cursor()
 
 def init():
 # Abre el archivo CSV
-    with open('C:/Users/HP/Desktop/styles/styles.csv', 'r') as csv_file:
+    with open(ruta_csv, 'r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         # Evitar la lectura de los nombres de la primera fila.
         next(csv_reader)
@@ -48,26 +50,82 @@ def init():
     cursor.execute("ALTER TABLE styles ADD COLUMN weighted_tsv2 tsvector")
     cursor.execute("UPDATE styles SET weighted_tsv = x.weighted_tsv, weighted_tsv2 = x.weighted_tsv FROM (SELECT id, setweight(to_tsvector('english', COALESCE(masterCategory,'')), 'A') || setweight(to_tsvector('english', COALESCE(articleType,'')), 'A') || setweight(to_tsvector('english', COALESCE(baseColour,'')), 'A') || setweight(to_tsvector('english', COALESCE(season,'')), 'A') || setweight(to_tsvector('english', COALESCE(usage,'')), 'A') || setweight(to_tsvector('english', COALESCE(productdisplayname,'')), 'B') AS weighted_tsv FROM styles) AS x WHERE x.id = styles.id;")
     cursor.execute("CREATE INDEX weighted_tsv_idx ON styles USING GIN (weighted_tsv2)")
+    connection.commit()
+    cursor.close()
 
 def topKpsql(query, k):
+    connection = psycopg2.connect(**db_config)
+    cursor = connection.cursor()
     words = query.split(" ")
     terms = ""
     for word in words:
-        terms += word + " | "
+        terms += word + " & "
     terms = terms[:-2]
     
     print("Terminos leidos: ", terms)
 
     cursor.execute("set enable_seqscan = false")
-    consulta = f"SELECT id, gender, mastercategory, subcategory, articletype, basecolour, season, year, usage, productdisplayname FROM styles, to_tsquery('english', '{terms}') query WHERE query @@ weighted_tsv2 ORDER BY ts_rank_cd(weighted_tsv2, query) desc LIMIT {k};"
+
+    # first idea
+    #consulta = f"SELECT id, gender, mastercategory, subcategory, articletype, basecolour, season, year, usage, productdisplayname FROM styles, to_tsquery('english', '{terms}') query WHERE query @@ weighted_tsv2 ORDER BY ts_rank_cd(weighted_tsv2, query) desc LIMIT {k};"
+
+    consulta = f"""SELECT id, gender, mastercategory, subcategory, articletype, basecolour, season, year, usage, productdisplayname 
+                FROM(
+                    SELECT 
+                    id, 
+                    gender, 
+                    mastercategory, 
+                    subcategory, 
+                    articletype, 
+                    basecolour, 
+                    season, 
+                    year, 
+                    usage, 
+                    productdisplayname,
+                    ts_rank_cd(weighted_tsv2, to_tsquery('english', '{terms}')) AS similarity
+                    FROM styles 
+                    WHERE to_tsquery('english','{terms}') @@ weighted_tsv2 
+                    ORDER BY similarity DESC LIMIT {k}
+                ) AS R"""
+    
     cursor.execute(consulta)
     rows = cursor.fetchall()
+    
+    
+    if len(rows)<k: # if we have less rows than k, we search with "|"
+        terms = ""
+        for word in words:
+            terms += word + " | "
+        terms = terms[:-2]
+        consulta = f"""SELECT id, gender, mastercategory, subcategory, articletype, basecolour, season, year, usage, productdisplayname 
+                FROM(
+                    SELECT 
+                    id, 
+                    gender, 
+                    mastercategory, 
+                    subcategory, 
+                    articletype, 
+                    basecolour, 
+                    season, 
+                    year, 
+                    usage, 
+                    productdisplayname,
+                    ts_rank_cd(weighted_tsv2, to_tsquery('english', '{terms}')) AS similarity
+                    FROM styles 
+                    WHERE to_tsquery('english', '{terms}') @@ weighted_tsv2 
+                    ORDER BY similarity DESC 
+                    LIMIT {k-len(rows)}
+                ) AS R""" # we search the top (k-rows we have)
+        cursor.execute(consulta)
+
+        rows2 = cursor.fetchall()# now, we append the new rows in the list
+        for new_row in rows2:
+            rows.append(new_row)
+
     for row in rows:
         print(row)
-
-
-
-query = "yellow casual pant"
+#init()
+query = "yellow casual pants are yellow"
 k = 5
 
 topKpsql(query, k)

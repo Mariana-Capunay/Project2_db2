@@ -429,11 +429,12 @@ class InvertedIndex:
             valuesTerm = find_word(term,self.nro_buckets)
             #print(term,"aparece en",len(valuesTerm),"rows")
 
+            itf = 1/math.log10(len(valuesTerm))
             for value in valuesTerm: #here, we itere in each pos_row
                 if value not in cosine: #this means that not other term was in this row, this is the first match
-                    cosine[value] = valuesTerm[value]*termsQuery[term] # multiply the tf of the row and of the query
+                    cosine[value] = valuesTerm[value]*termsQuery[term]*itf # multiply the tf-tf of the row and of the query
                 else: #this means that the row has another word that match with the term, so we increase the value of the product
-                    cosine[value] += valuesTerm[value]*termsQuery[term]
+                    cosine[value] += valuesTerm[value]*termsQuery[term]*itf
             
         #print(cosine)
 
@@ -454,7 +455,7 @@ class InvertedIndex:
         # now, we have to find the topK similarities
         if topK!=0:
             cosine = {k: v for k, v in sorted(cosine.items(), key=lambda item: item[1], reverse=True)}
-            return dict(list(cosine.items())[:topK+1])
+            return dict(list(cosine.items())[:topK])
         print(cosine)
         return cosine
 
