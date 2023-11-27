@@ -5,13 +5,14 @@ import pywt.data
 import pandas as pd
 import struct
 import numpy as np
+path = "C:/Users/ASUS/OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA/Ciclo 5/BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias/PROYECTOS/PROYECTO 2/proyecto_python/Project2_db2/MultidimensionalIndex/"
 
-output_file = "vector_images.bin"
-position_data_file = "position_data.bin"
-position_feature_file = "position_feature.bin"
-images_csv = "images.csv"
-features_csv = "styles.csv"
-id_to_pos_file = "id_to_pos.bin"
+output_file = path+ "vector_images.bin"
+position_data_file = path+ "position_data.bin"
+position_feature_file = path + "position_feature.bin"
+images_csv =path+ "images.csv"
+features_csv = path+"styles.csv"
+id_to_pos_file = path+"id_to_pos.bin"
 
 INTEGER_BYTES = 4
 FLOAT_BYTES = 4

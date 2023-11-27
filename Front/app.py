@@ -3,6 +3,16 @@ import time
 import psycopg2
 import csv
 import sys;
+
+sys.path.append(r'C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\MultidimensionalIndex') #path to InvertedIndex
+#importar la clase KNN_Secuencial del modulo knn_secuencial
+from knn_secuencial import KNN_Secuencial 
+#llamamos a la funcion knn_search del modulo knn-rtree
+from knn_rtree import KNN_R_Tree
+#llamamos a la funcion knn_search del modulo knn-high-d
+from knn_high_d import KNN_High_D_Tree
+
+
 sys.path.append(r'C:\Users\ASUS\OneDrive - UNIVERSIDAD DE INGENIERIA Y TECNOLOGIA\Ciclo 5\BASE DE DATOS 2 - Sanchez Enriquez, Heider Ysaias\PROYECTOS\PROYECTO 2\proyecto_python\Project2_db2\InvertedIndex') #path to InvertedIndex
 from InvertedIndex import InvertedIndex #importar la clase InvertedIndex del modulo InvertedIndex
 from read_byte import get_row #importar la funcion get_row del modulo read_byte
@@ -32,18 +42,39 @@ def home():
 def about():
     return render_template("about.html")
 
+
 indice = InvertedIndex()
+b = KNN_Secuencial(20, True)
+print("holaaa")
+c = KNN_R_Tree(20, False)
+d = KNN_High_D_Tree(20, False, 100, False)
 @app.route('/search', methods=['POST'])
 def search():
     searchTerm = request.json.get('searchTerm', None)
+    print("searchTerm: ")
     print(searchTerm)
     topk = request.json.get('topk', 5)
     print(topk)
 
     InvertedIndexQuery = indice.processQuery(searchTerm)
+
     result = indice.cosine(InvertedIndexQuery,topk)
 
     rows = [get_row(pos_row) for pos_row in result]
+
+    print("Filas que coinciden: ")
+    print(rows)
+
+    #obetener el id de los rows
+    ids = [row[0] for row in rows]
+    print(ids)
+
+    #llamar a la funcion knn_search del modulo knn-secuencial
+    #fila = b.knn_search(id, -1, topk)
+    print("Filas que coinciden: ")
+    print(rows)
+
+
 
     return jsonify(rows)
 
@@ -67,8 +98,6 @@ def consulta():
     return jsonify(rows)
 
 
-
-    
 
 
 

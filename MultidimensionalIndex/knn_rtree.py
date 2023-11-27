@@ -25,3 +25,5 @@ class KNN_R_Tree:
 		result_ids = result_ids
 		return generate_image_info.get_data_images(result_ids)
 
+a =  KNN_R_Tree(40000, True)
+print(a.knn_search(15970, 5))
