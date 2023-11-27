@@ -120,12 +120,11 @@ Fashion Products Dataset, es una recopilación estructurada de información sobr
 
 ## 3. Técnica de indexación de las librerías utilizadas - Indice multimedia <a name="id3"></a>
 
-
-----------------------------------------------
+Se cargo los vectores y caracteristicas usando registros de longitud fija y variable para no cargar todo el dataset en memoria principal. así como los ids de las imagenes se cargaron en memoria secundaria y se encuentran con una busqueda bianria
 
 ## 4. Como se realiza el KNN Search y el Range Search <a name="id4"></a>
 
-----------------------------------------------
+El Knn Search consiste en en los K vecinos más cercanos de un punto usando la distancia euclidiana (suma de minkowski para k = 2), mientras que el range search consiste en buscar los hasta una determinada distancia
 
 ## 5. Construcción del índice invertido<a name="id5"></a>
 El dataset trabajado en este proyecto no puede manejarse en memoria RAM, por tal motivo hemos optado por una solución escalable que tome en cuenta las consideraciones de hardware: memoria, disco, velocidad.
